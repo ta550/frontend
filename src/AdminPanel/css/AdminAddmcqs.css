@@ -1,0 +1,74 @@
+.add_mcq_child{
+    padding: 50px 0;
+    z-index: -1;
+}
+.add_mcq_child h1{
+    margin-bottom: 50px;
+}
+.mcqDisplay {
+    margin-top: 10px;
+    border: 1px solid #a9a9a9;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+}
+.mcqDisplay p {
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-bottom: 0;
+    font-size: .8rem;
+    font-weight: 500;
+}
+.mcqDisplay__button {
+    margin-left: 20px;
+}
+.mcqDisplay__correct {
+    color: green;
+    transform: scale(1.2);
+    margin-right: 5px;
+}
+.mcqDisplay__delete {
+    color: red;
+    transform: scale(1.2);
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.MuiSvgIcon-root {
+    fill: currentColor;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    font-size: 1.5rem;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    flex-shrink: 0;
+    user-select: none;
+}
+.mcq_selected{
+    background: lightgreen ;
+}
+.mcqs button{
+    background-color: var(--primary);
+    border: none;
+    outline: none;
+}
+.mcqs button:focus{
+    outline: none;
+}
+.form-control{
+    box-shadow: none !important;
+    border: .1px solid rgba(0,0,0,0.4) !important;
+    border-radius: 0 !important;
+}
+input:focus, textarea:focus{
+    outline: none !important;
+    box-shadow: none !important;
+    background: rgba(0,0,0,.1) !important;
+}
+
+@media (max-width: 424px){
+    .multiple_choice_label{
+        font-size: 30px !important;
+    }
+}   
