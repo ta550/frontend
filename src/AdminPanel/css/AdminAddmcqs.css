@@ -1,5 +1,5 @@
 .add_mcq_child{
-    padding: 50px 0;
+    padding: 0 1rem !important;
     z-index: -1;
 }
 .add_mcq_child h1{
@@ -66,9 +66,13 @@ input:focus, textarea:focus{
     box-shadow: none !important;
     background: rgba(0,0,0,.1) !important;
 }
-
-@media (max-width: 424px){
-    .multiple_choice_label{
-        font-size: 30px !important;
-    }
-}   
+.mcqs_list_main button{
+    background:linear-gradient(to bottom, #0698bd 5%, #00c4ff 100%);
+	background-color:#0698bd;
+    border: none;
+    outline: none !important;
+    padding: 10px;
+    border-radius: 50%;
+    margin: 2px 3px !important;
+    text-align: center;
+}

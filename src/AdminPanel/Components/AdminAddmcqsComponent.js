@@ -39,12 +39,16 @@ function AdminAddmcqsComponent(props) {
     }
     // on option delete
     const deleteOption = (e) => {
+        let items = [...options];
+        let item = { ...items[e] };
+        if (item.status === true) {
+            $(`.mcq${e}`).removeClass("mcq_selected");
+        }
         const newTodos = options.filter((_, index) => index !== e);
         setOptions(newTodos);
     }
     // on option selected
     const onselect = (e) => {
-        $(`.mcq${e}`).addClass("mcq_selected")
         let items = [...options];
         let item = { ...items[e] };
         for (var i = 0; i < items.length; i++) {
@@ -55,8 +59,13 @@ function AdminAddmcqsComponent(props) {
                 item2.status = false
                 items[i] = item2
             } else {
+                $(`.mcq${e}`).addClass("mcq_selected")
                 item.status = true;
             }
+        }
+        if (item.status === true) {
+            $(`.mcq${e}`).addClass("mcq_selected");
+            item.status = true
         }
         items[e] = item;
         setOptions(items)
@@ -67,16 +76,27 @@ function AdminAddmcqsComponent(props) {
         if (question === "" || mark === "" || options.length === 0) {
             alert("Please Fill out all fields")
         } else {
-            const data = {
-                question: question,
-                marks: mark,
-                options: options,
-                topics: topics
+            const items = [...options];
+            let status = 0;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].status === true) {
+                    status = 1;
+                }
             }
-            props.changeState(data)
-            setOptions([])
-            setQuestion("")
-            setTopics([])
+            if (status === 1) {
+                const data = {
+                    question: question,
+                    marks: mark,
+                    options: options,
+                    topics: topics
+                }
+                props.changeState(data)
+                setOptions([])
+                setQuestion("")
+                setTopics([])
+            } else {
+                alert('Choose the Correct Option')
+            }
         }
     }
     // Get Old Mcq for Update
@@ -85,6 +105,7 @@ function AdminAddmcqsComponent(props) {
         setTopics([])
         setOptions(mcqReducer[e].options)
         setQuestion(mcqReducer[e].question)
+        const mark = $('.marks').val(mcqReducer[e].marks);
         const data = mcqReducer[e].topics;
         setTopics(data)
         var optionsbyindex = mcqReducer[e].options;
@@ -105,20 +126,36 @@ function AdminAddmcqsComponent(props) {
     const update_mcq_by_id = () => {
         if (window.value != null) {
             const mark = $('.marks').val();
-            const data = {
-                question: question,
-                marks: mark,
-                options: options,
-                topics: topics,
-                index: window.value
+            if (question === "" || mark === "" || options.length === 0) {
+                alert("Please Fill out all fields")
+            } else {
+                const items = [...options];
+                let status = 0;
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].status === true) {
+                        status = 1;
+                    }
+                }
+                if (status === 1) {
+                    const mark = $('.marks').val();
+                    const data = {
+                        question: question,
+                        marks: mark,
+                        options: options,
+                        topics: topics,
+                        index: window.value
+                    }
+                    props.updateState(data)
+                    setQuestion("")
+                    setOptions([])
+                    setTopics([])
+                    $('.next_mcq_button').css("display", "inline")
+                    $('.update_mcq_button').css("display", "none");
+                    $('.delete_mcq_button').css("display", "none");
+                } else {
+                    alert('Choose the Correct Option')
+                }
             }
-            props.updateState(data)
-            setQuestion("")
-            setOptions([])
-            setTopics([])
-            $('.next_mcq_button').css("display", "inline")
-            $('.update_mcq_button').css("display", "none");
-            $('.delete_mcq_button').css("display", "none");
         } else {
             alert("Please Select Mcq for Delete")
         }
@@ -131,10 +168,10 @@ function AdminAddmcqsComponent(props) {
                 props.deleteState(index)
                 setQuestion("")
                 setOptions([])
+                setTopics([])
                 $('.next_mcq_button').css("display", "inline")
                 $('.update_mcq_button').css("display", "none");
                 $('.delete_mcq_button').css("display", "none");
-                setTopics([])
             }
 
         } else {
@@ -163,18 +200,11 @@ function AdminAddmcqsComponent(props) {
     }
 
     return (
-        <section className="add_mcq_main container">
-            <div className="mcqs_list_main d-inline">
-                {mcqReducer.map((item, i) => (
-                    <div className="d-inline">
-                        <button key={i} style={{ width: '40px' }} className="text-center text-white" onClick={() => getOldMcq(i)}>{i + 1}</button>
-                    </div>
-                ))}
-            </div>
+        <section className="add_mcq_main">
             {/* Responsive Meta Data */}
             <div className="table-responsive mx-auto">
-                <table class="table table-striped table-inverse table-bordered">
-                    <thead class="thead-inverse">
+                <table class="table table-striped w-50 mx-auto table-inverse table-bordered">
+                    <thead class="thead-inverse table-dark">
                         <tr className='text-center' style={{ fontWeight: '500' }}>
                             <td>System</td>
                             <td>Board</td>
@@ -199,14 +229,20 @@ function AdminAddmcqsComponent(props) {
                 </table>
             </div>
             {/* Add MCQs Child  */}
-            <div className="add_mcq_child px-3 container-fluid">
+            <div className="add_mcq_child container-fluid">
                 <div className="row">
+                    <div className="col-lg-2 mb-5 mcqs_list_main">
+                        {mcqReducer.map((item, i) => (
+                            <div className="d-inline">
+                                <button key={i} style={{ width: '40px' }} className="text-center text-white" onClick={() => getOldMcq(i)}>{i + 1}</button>
+                            </div>
+                        ))}
+                    </div>
                     {/* Mcqs Left Side */}
-                    <div className="col-lg-8">
-                        <p className="text-center multiple_choice_label" style={{ fontSize: "8vh" }}>Multiple Choice</p>
+                    <div className="col-lg-7">
                         <form onSubmit={submit} autoComplete="off">
                             <div className="form-group">
-                                <textarea className="form-control" placeholder="Enter Your Question" rows="5" value={question} onChange={questionChange} required></textarea>
+                                <textarea className="form-control" placeholder="Enter Your Question" rows="6" value={question} onChange={questionChange} required></textarea>
                             </div>
                             <div className="p-2 form-group text-white" style={{ background: "rgba(0,0,0,0.5)", height: "140px", borderRadius: "5px", overflowY: 'scroll' }}>
                                 <p className="math"><MathJax math={math} /></p>
@@ -220,9 +256,11 @@ function AdminAddmcqsComponent(props) {
                         </form>
                     </div>
                     {/* Mcqs Right Side */}
-                    <div className="col-lg-4 pt-4">
+                    <div className="col-lg-3">
                         <form onSubmit={submitTopic} >
-                            <input type="number" className="form-control marks" placeholder="Enter MCQ Marks" max="100" min="1" />
+                            <div className="form-group mb-4">
+                                <input type="number" className="form-control marks w-50 float-right" placeholder="Enter Marks" max="100" min="1" /><br />
+                            </div>
                             <div className="topics_main mt-3 container-fluid">
                                 <div className="row">
                                     <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} className="form-control col-10" placeholder="Enter Topics" required />
@@ -239,7 +277,7 @@ function AdminAddmcqsComponent(props) {
                     <div className="container-fluid">
                         <div className="row">
                             <div className="col-10 mx-auto mt-4">
-                                <div className="all_mcq_operations_button w-100 ">
+                                <div className="all_mcq_operations_button d-flex mx-auto justify-content-center w-100 ">
                                     <button type="button" onClick={send_json} className="mx-2 mt-2 btn mybutton">End Exame</button>
                                     <button type="button" style={{ display: "none" }} onClick={delete_mcq_by_id} className="mx-2 mt-2 mybutton delete_mcq_button btn">delete</button>
                                     <button type="button" style={{ display: "none" }} onClick={update_mcq_by_id} className="mx-2 mt-2 mybutton update_mcq_button btn mybutton">update</button>
