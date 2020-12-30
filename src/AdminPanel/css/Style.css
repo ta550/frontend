@@ -1,10 +1,10 @@
-/* Css Variables */
 .Admin_Sidebar{
     width: 220px;
     height: 100vh;
-    background-color: black;
+    background-color: #39435C;
     position: fixed;
     left: -220px;
+    top: 0;
     z-index: 99;
     transition: .3s ease-in-out;
 }
@@ -17,16 +17,30 @@
     list-style-type: none;
 }
 .sidebar_ul li a{
-    margin-top: 10px;
-    padding: 12px 20px;
-    background-color: aqua;
+    padding: 7px 20px;
+    color: #fff;
     display: flex;
     align-items: center;
-    border-left: 10px solid rgba(0, 0, 0, .5);
+    transition: .3s ease-in-out;
+    font-size: 14px;
+}
+.admin_panel_heading_li{
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #283744;
+    margin-bottom: 10px;
+}
+.admin_panel_heading_li h4{
+    font-size: 24px !important;
+    padding: 10px 0;
+    color: #fff;
 }
 .sidebar_ul li a:hover{
+    border-left: 10px solid rgba(0, 0, 0, .5);
     text-decoration: none;
+    background-color: #23B7E5;
 }
 .sidebar_ul li a svg{
     margin-right: 15px !important;
@@ -36,7 +50,7 @@
     position: absolute !important;
     right: -25px;
     font-size: 40px;
-    color: black;
+    color: #39435C;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;

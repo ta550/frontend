@@ -9,14 +9,13 @@
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
     "jquery": "^3.5.1",
+    "mathpix-markdown-it": "^1.0.38",
     "popper.js": "^1.12.9",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
     "react-datepicker": "^3.3.0",
     "react-dom": "^17.0.1",
     "react-icons": "^4.1.0",
-    "react-mathjax-preview": "^2.1.3",
-    "react-mathlive": "^3.0.5-preview.1",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
@@ -25,7 +24,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    // "build": "react-scripts build",
     "build": "react-scripts --max_old_space_size=256 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

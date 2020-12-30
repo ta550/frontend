@@ -2,6 +2,10 @@
     padding: 0 1rem !important;
     z-index: -1;
 }
+.add_mcq_main{
+    background: #F5F3F9;
+    min-height: 100vh;
+}
 .add_mcq_child h1{
     margin-bottom: 50px;
 }
@@ -57,6 +61,7 @@
     outline: none;
 }
 .form-control{
+    padding: 5px 2px;
     box-shadow: none !important;
     border: .1px solid rgba(0,0,0,0.4) !important;
     border-radius: 0 !important;
@@ -67,12 +72,35 @@ input:focus, textarea:focus{
     background: rgba(0,0,0,.1) !important;
 }
 .mcqs_list_main button{
-    background:linear-gradient(to bottom, #0698bd 5%, #00c4ff 100%);
 	background-color:#0698bd;
-    border: none;
     outline: none !important;
-    padding: 10px;
-    border-radius: 50%;
-    margin: 2px 3px !important;
+    padding: 8px !important;
+    border: 3px solid #fff;
+    border-radius: 30%;
+    margin: 2px 0 !important;
+    font-size: 13px;
     text-align: center;
+}
+.topicDisplay{
+    margin: 5px 0;
+    border: 1px solid #a9a9a9;
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    position: relative;
+}
+.topicDisplay p{
+    word-wrap: break-word;
+    font-size: 15px;
+    width: 70%;
+    margin: 0 10px;
+}
+.topicDisplay .delete_topic{
+    position: absolute;
+    top: 3px;
+    right: 7px;
+    cursor: pointer;
+    color: red;
 }

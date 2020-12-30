@@ -17,24 +17,21 @@ form.board_form{
     width: 60% !important;
 }
 .mybutton {
-	background:linear-gradient(to bottom, #0698bd 5%, #00c4ff 100%);
-	background-color:#0698bd;
 	border: none !important;
 	display:inline-block;
 	cursor:pointer;
     color:#ffffff !important;
+    background: var(--info) !important;
     font-weight: bolder;
 	font-size:17px;
-    padding:10px 25px !important;
+    padding:7px 25px !important;
+    border-radius: 5px !important;
     outline: none !important;
-    border-radius: 0 !important;
 	text-decoration:none;
     position: relative;
     top: -2px;
 }
 .mybutton:hover {
-	background:linear-gradient(to bottom, #00c4ff 5%, #0698bd 100%);
-    background-color:#00c4ff;
     position: relative;
     top: 0;
 }

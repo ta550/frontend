@@ -32,8 +32,49 @@ function AdminAddBoardComponent(props) {
 
     const change_month_and_year = (date) => {
         setStartDate(date)
-        const month = date.getMonth() + 1
-        const year = date.getFullYear()
+        const monthNumber = date.getMonth();
+        const year = date.getFullYear();
+        var month = "";
+        switch(monthNumber.toString()){
+            case "0":
+                month="January";
+                break;
+            case "1":
+                month="February";
+                break;
+            case "2":
+                month="March"
+                break;
+            case "3":
+                month="April"
+                break;
+            case "4":
+                month="May"
+                break;
+            case "5":
+                month="June"
+                break;
+            case "6":
+                month="July"
+                break;
+            case "7":
+                month="August"
+                break;
+            case "8":
+                month="September"
+                break;
+            case "9":
+                month="October"
+                break;
+            case "10":
+                month="November"
+                break;
+            case "11":
+                month="December"
+                break;
+            default:
+                alert("please try again")
+        }
         setPaper({...paper, year: year, month: month})
     }
 
@@ -43,27 +84,27 @@ function AdminAddBoardComponent(props) {
                 <h1 className="text-center board_titile">Add Paper</h1>
                 <form className="board_form mx-auto mt-5" onSubmit={submit_data}>
                     <div className="form-group">
-                        <label for="">Enter System :</label>
+                        <label htmlFor="">Enter System :</label>
                         <input type="text" autoFocus className="form-control" name="system" onChange={change_input} value={paper.system} required/>
                     </div>
                     <div className="form-group">
-                        <label for="">Enter Board :</label>
+                        <label htmlFor="">Enter Board :</label>
                         <input type="text" className="form-control" onChange={change_input} name="board" value={paper.board} required/>
                     </div>
                     <div className="form-group">
-                        <label for="">Enter Subject :</label>
+                        <label htmlFor="">Enter Subject :</label>
                         <input type="text" className="form-control" onChange={change_input} name="subject" value={paper.subject} required/>
                     </div>
                     <div className="form-group datepicker_main">
-                        <label for="">Select Year And Month :</label><br />
+                        <label htmlFor="">Select Year And Month :</label><br />
                         <DatePicker className="form-control w-100" selected={startDate} showMonthYearPicker peekNextMonth onChangeRaw={e => e.preventDefault()} onFocus={e => e.preventDefault()} onKeyDown={e => e.preventDefault()} disabledKeyboardNavigation dateFormat="MMMM yyyy" onChange={change_month_and_year} />
                     </div>
                     <div className="form-group">
-                        <label for="">Enter Series :</label>
+                        <label htmlFor="">Enter Series :</label>
                         <input type="text" className="form-control" onChange={change_input} name="series" value={paper.series} required/>
                     </div>
                     <div className="form-group">
-                        <label for="">Enter Paper:</label>
+                        <label htmlFor="">Enter Paper:</label>
                         <input type="text" className="form-control" onChange={change_input} name="paper" value={paper.paper} required/>
                     </div>
                     <div className="form-group justify-content-center d-flex">

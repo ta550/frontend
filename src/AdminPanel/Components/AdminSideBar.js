@@ -16,7 +16,8 @@ function AdminSideBar() {
 
     return (
         <section className="Admin_Sidebar">
-            <ul className="sidebar_ul">
+        <ul className="sidebar_ul">
+                <li className="admin_panel_heading_li"><h4 exact to="/admin/panel/">Admin Panel</h4></li>
                 <li><NavLink exact to="/admin/panel/"><FcHome /> Home</NavLink></li>
                 <li><NavLink exact to="/admin/panel/add/board"><FcPlus /> MCQs Paper</NavLink></li>
                 <li><NavLink exact to=""><FcTodoList /> MCQs Paper List</NavLink></li>
