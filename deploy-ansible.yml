@@ -17,4 +17,4 @@
         image: "muhammad1/exam105-fe:{{DOCKER_TAG}}"
         state: started
         published_ports:
-          - 0.0.0.0:80:8010
+          - 0.0.0.0:80:80
