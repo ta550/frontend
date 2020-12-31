@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import '../css/AdminAddmcqs.css'
 import { FcPlus } from 'react-icons/fc'
 import $ from 'jquery'
-import { useSelector } from 'react-redux'
 import { MathpixLoader, MathpixMarkdown } from "mathpix-markdown-it";
 import { add_mcq, add_mcqs_complete, remove_mcq, update_mcq } from '../../action/index'
-import { connect } from 'react-redux'
+import { connect , useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 function AdminAddmcqsComponent(props) {
