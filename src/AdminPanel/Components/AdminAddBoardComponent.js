@@ -23,7 +23,7 @@ function AdminAddBoardComponent(props) {
     const submit_data = (e) => {
         e.preventDefault()
         props.add_board(paper)
-        history.push("/admin/panel/add/mcqs")
+        history.push("/admin/panel/add/")
     }
 
     const change_input = (e) => {

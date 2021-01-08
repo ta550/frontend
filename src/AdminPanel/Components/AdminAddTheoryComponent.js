@@ -3,7 +3,7 @@ import '../css/AdminAddmcqs.css'
 import { FcPlus } from 'react-icons/fc'
 import $ from 'jquery'
 import { MathpixLoader, MathpixMarkdown } from "mathpix-markdown-it";
-import { add_mcq, remove_mcq, update_mcq } from '../../action/index'
+import { add_theory, remove_theory, update_theory } from '../../action/index'
 import { connect, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import Button from '@material-ui/core/Button';
@@ -17,8 +17,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import ModelNotification from './ModelNotification'
-import ConfirmDialog from './ConfirmDialog'
-
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -28,15 +26,14 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function AdminAddmcqsComponent(props) {
+function AdminAddTheoryComponent(props) {
     // React State hooks
     const [question, setQuestion] = useState("")
+    const [answer, setAnswer] = useState("")
     const [topic, setTopic] = useState("");
-    const [options, setOptions] = useState([]);
     const [topics, setTopics] = useState([])
-    const [openAlertDelete, setOpenAlertDelete] = React.useState(false);
-    const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
-    const [openAlertAdd, setOpenAlertAdd] = React.useState(false);
+    const [openAlert, setOpenAlert] = React.useState(false);
+    const [AlertValue, setAlertValue] = React.useState(false);
     const [ConfirmDialog, setConfirmDialog] = React.useState(false);
     // Dialog Hooks
     const [DialogStatus, setDialogStatus] = React.useState(false);
@@ -45,7 +42,7 @@ function AdminAddmcqsComponent(props) {
     const [DialogOk, setDialogOk] = React.useState("Ok");
 
     // React Redux
-    const mcqReducer = useSelector(state => state.mcqReducer)
+    const theoryReducer = useSelector(state => state.theoryReducer)
     const boardReducer = useSelector(state => state.boardReducer)
     const history = useHistory();
 
@@ -53,6 +50,8 @@ function AdminAddmcqsComponent(props) {
         if (boardReducer.length === 0) {
             history.push("/admin/panel/add/papers/")
         }
+        $('.answer_output').slideUp();
+        $('.question_output').slideUp();
     }, [])
     // Math compiler
     // question input changehandler
@@ -62,7 +61,7 @@ function AdminAddmcqsComponent(props) {
     // SetTime Out Functions
     const mcqButtonChangeBorder = (e) => {
         setTimeout(() => {
-            for (var i = 0; i < mcqReducer.length; i++) {
+            for (var i = 0; i < theoryReducer.length; i++) {
                 if (i === e) {
                     $(`.question${e}`).css({ border: '3px solid black' })
                 } else {
@@ -71,157 +70,85 @@ function AdminAddmcqsComponent(props) {
             }
         }, 100)
     }
-    const SelectedOptionsBackgroundChange = optionsbyindex => {
-        setTimeout(() => {
-            for (var i = 0; i < optionsbyindex.length; i++) {
-                if (optionsbyindex[i].status === true) {
-                    $(`.mcq${i}`).addClass("mcq_selected")
-                } else {
-                    $(`.mcq${i}`).removeClass("mcq_selected")
-                }
-            }
-        }, 100)
-    }
-    // on option created
-    const submit = (e) => {
-        e.preventDefault();
-        let opt = $('.static_option').val();
-        const option = opt.trim();
-        if (option.length > 0) {
-            setOptions([...options, { status: false, option: option }]);
-            $('.static_option').val("");
-        }
-        SelectedOptionsBackgroundChange(options)
-    }
-    // on option delete
-    const deleteOption = (e) => {
-        let items = [...options];
-        let item = { ...items[e] };
-        const newTodos = options.filter((_, index) => index !== e);
-        setOptions(newTodos);
-        var optionsbyindex = newTodos;
-        SelectedOptionsBackgroundChange(optionsbyindex)
-    }
-    // on option selected
-    const onselect = (e) => {
-        let items = [...options];
-        let item = { ...items[e] };
-        for (var i = 0; i < items.length; i++) {
-            if (items[i].status === true) {
-                $(`.mcq${i}`).removeClass("mcq_selected")
-                item.status = true;
-                let item2 = { ...items[i] }
-                item2.status = false
-                items[i] = item2
-            } else {
-                $(`.mcq${e}`).addClass("mcq_selected")
-                item.status = true;
-            }
-        }
-        if (item.status === true) {
-            $(`.mcq${e}`).addClass("mcq_selected");
-            item.status = true
-        }
-        items[e] = item;
-        setOptions(items)
-    }
     // on mcq added
-    const add_mcq = () => {
+    const add_theory_question = () => {
         const mark = $('.marks').val();
-        if (question === "" || mark === "" || options.length === 0) {
+        if (question === "" || mark === "" || answer === "") {
             setDialogDesc("All Fields Are Required?")
             setDialogStatus(true)
         } else {
-            const items = [...options];
-            let status = 0;
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].status === true) {
-                    status = 1;
-                }
+            const data = {
+                question: question,
+                answer: answer,
+                marks: mark,
+                topics: topics
             }
-            if (status === 1) {
-                const data = {
-                    question: question,
-                    marks: mark,
-                    options: options,
-                    topics: topics
-                }
-                props.changeState(data)
-                setOpenAlertAdd(true)
-                setOptions([])
-                setQuestion("")
-                setTopics([])
-            } else {
-                setDialogDesc("Chose The correct Option")
-                setDialogStatus(true)
-            }
+            props.changeState(data)
+            setAlertValue("Added Successfull")
+            setOpenAlert(true)
+            setQuestion("")
+            setAnswer("")
+            setTopics([])
         }
     }
     // Get Old Mcq for Update
-    const getOldMcq = (e) => {
+    const getOldTheroyQuestion = (e) => {
         window.value = e;
         mcqButtonChangeBorder(e)
         setTopics([])
-        setOptions(mcqReducer[e].options)
-        setQuestion(mcqReducer[e].question)
-        $('.marks').val(mcqReducer[e].marks);
-        setTopics(mcqReducer[e].topics)
-        // Selected Options
-        var optionsbyindex = mcqReducer[e].options;
-        SelectedOptionsBackgroundChange(optionsbyindex)
-        // Hide and show buttons
-        $('.next_mcq_button').css("display", "none")
-        $('.update_mcq_button').css("display", "inline");
-        $('.delete_mcq_button').css("display", "inline");
+        setQuestion(theoryReducer[e].question)
+        setAnswer(theoryReducer[e].answer)
+        $('.marks').val(theoryReducer[e].marks);
+        setTopics(theoryReducer[e].topics)
+        // // Hide and show buttons
+        $('.next_theory_button').css("display", "none")
+        $('.update_theory_button').css("display", "inline");
+        $('.delete_theory_button').css("display", "inline");
     }
-    // Update Mcq By its Id
-    const update_mcq_by_id = () => {
+    // // Update Mcq By its Id
+    const update_theory_question_by_id = () => {
         if (window.value != null) {
             const mark = $('.marks').val();
-            if (question === "" || mark === "" || options.length === 0) {
+            if (question === "" || mark === "" || answer === "") {
                 setDialogDesc("All Fields Are Required?")
                 setDialogStatus(true)
             } else {
-                const items = [...options];
-                let status = 0;
-                for (var i = 0; i < items.length; i++) {
-                    if (items[i].status === true) {
-                        status = 1;
-                    }
+                const mark = $('.marks').val();
+                const data = {
+                    question: question,
+                    answer: answer,
+                    marks: mark,
+                    topics: topics,
+                    index: window.value
                 }
-                if (status === 1) {
-                    const mark = $('.marks').val();
-                    const data = { question: question, marks: mark, options: options, topics: topics, index: window.value }
-                    props.updateState(data)
-                    setQuestion("")
-                    setOptions([])
-                    setTopics([])
-                    setOpenAlertUpdate(true)
-                    mcqButtonChangeBorder(-1)
-                    $('.next_mcq_button').css("display", "inline")
-                    $('.update_mcq_button').css("display", "none");
-                    $('.delete_mcq_button').css("display", "none");
-                } else {
-                    setDialogDesc("Chose The Correct Option")
-                    setDialogStatus(true)
-                }
+                props.updateState(data)
+                setQuestion("")
+                setAnswer("")
+                setTopics([])
+                mcqButtonChangeBorder(-1)
+                $('.next_theory_button').css("display", "inline")
+                $('.update_theory_button').css("display", "none");
+                $('.delete_theory_button').css("display", "none");
+                setAlertValue("Updated Successfull")
+                setOpenAlert(true)
             }
         } else {
             setDialogDesc("Select MCQ For Delete?")
             setDialogStatus(true)
         }
     }
-    // Delete Mcq By its Id
-    const delete_mcq_by_id = () => {
+    // // Delete Mcq By its Id
+    const delete_theory_question = () => {
+        setConfirmDialog(false)
         if (window.value != null) {
             const index = window.value;
-            setConfirmDialog(false)
             props.deleteState(index)
             setQuestion("")
-            setOptions([])
+            setAnswer("")
             setTopics([])
             mcqButtonChangeBorder(-1)
-            setOpenAlertDelete(true);
+            setAlertValue("Deleted Successfull")
+            setOpenAlert(true)
             $('.next_mcq_button').css("display", "inline")
             $('.update_mcq_button').css("display", "none");
             $('.delete_mcq_button').css("display", "none");
@@ -245,23 +172,24 @@ function AdminAddmcqsComponent(props) {
     const question_output_hide_show = () => {
         $('.question_output').slideToggle();
     }
-    // Create JSON
-    const send_json = () => {
-        const array = new Array(boardReducer[0]);
-        mcqReducer.map((item, i) => {
-            array.push(item)
-        })
-        const jsonData = JSON.stringify(array);
-        document.write(jsonData)
+    const answer_output_hide_show = () => {
+        $('.answer_output').slideToggle();
     }
-    // Close Alert
+    // // Create JSON
+    // const send_json = () => {
+    //     const array = new Array(boardReducer[0]);
+    //     mcqReducer.map((item, i) => {
+    //         array.push(item)
+    //     })
+    //     const jsonData = JSON.stringify(array);
+    //     document.write(jsonData)
+    // }
+    // // Close Alert
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
-        setOpenAlertDelete(false);
-        setOpenAlertUpdate(false);
-        setOpenAlertAdd(false);
+        setOpenAlert(false)
         setDialogStatus(false);
         setConfirmDialog(false)
     };
@@ -272,8 +200,8 @@ function AdminAddmcqsComponent(props) {
                 <div className="row">
                     <div className="col-lg-2 mb-5 mcqs_list_main ">
                         <div className="bg-white py-3 container-fluid" style={{ borderRadius: '20px', boxShadow: '0px 0px 2px black' }}>
-                            {mcqReducer.map((item, i) => (
-                                <button key={i} style={{ width: '40px' }} className={`col-3 text-center bg-success text-white question${i}`} onClick={() => getOldMcq(i)}>{i + 1}</button>
+                            {theoryReducer.map((item, i) => (
+                                <button key={i} style={{ width: '40px' }} className={`col-3 text-center bg-success text-white question${i}`} onClick={() => getOldTheroyQuestion(i)}>{i + 1}</button>
                             ))}
                         </div>
                     </div>
@@ -297,7 +225,7 @@ function AdminAddmcqsComponent(props) {
                                 </tbody>
                             </table>
                         </div>
-                        <form onSubmit={submit} className="container-fluid" autoComplete="off" style={{ minHeight: '60vh' }}>
+                        <div className="container-fluid" style={{ minHeight: '60vh' }}>
                             <div className="form-group">
                                 <textarea className="form-control" placeholder="Enter Question" rows="5" value={question} onChange={questionChange} required></textarea>
                             </div>
@@ -307,13 +235,14 @@ function AdminAddmcqsComponent(props) {
                                     <MathpixMarkdown text={question} />
                                 </MathpixLoader>
                             </div>
-                            <div className="form-group m-0">
-                                <input type="text" name="option_input" placeholder="Enter Option" style={{ width: "90%" }} className="d-inline static_option form-control" required /> <button type="submit" className="p-1 mt-1" style={{ width: '5%', background: "none", border: "none", outline: "none" }}><FcPlus className="another_option h2" /></button>
+                            <textarea className="form-control" placeholder="Enter Answer" rows="5" value={answer} onChange={(e) => setAnswer(e.target.value)} required></textarea>
+                            <button type="button" onClick={answer_output_hide_show} className="btn btn-sm mybutton py-1 my-2 px-2 d-flex ml-auto m-0">hide / show</button>
+                            <div className="p-2 form-group answer_output bg-info text-white col-12" style={{ height: "160px", borderRadius: "5px", overflowY: 'scroll' }}>
+                                <MathpixLoader>
+                                    <MathpixMarkdown text={answer} />
+                                </MathpixLoader>
                             </div>
-                            {options.map((item, i) => {
-                                return <div key={i} className={`mcqDisplay mcq${i}`}><p style={{ width: '80%', fontSize: '15px', wordWrap: 'break-word' }} className="option_text py-auto mb-2">{item.option}</p><div className="mcqDisplay__button"><svg onClick={() => onselect(i)} className="MuiSvgIcon-root mcqDisplay__correct" style={{ cursor: 'pointer' }} focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.59 7.58L10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path></svg><svg onClick={() => deleteOption(i)} style={{ cursor: 'pointer' }} className="MuiSvgIcon-root mcqDisplay__delete" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></div></div>
-                            })}
-                        </form>
+                        </div>
                         <div className="container-fluid">
                             <div className="row">
                                 <div className="col-12 mx-auto mt-4">
@@ -322,9 +251,9 @@ function AdminAddmcqsComponent(props) {
                                             <button type="button" onClick={() => history.push("/admin/panel/add/images")} className="bg-success mx-2 mt-2 btn mybutton">Next Step</button>
                                         </div>
                                         <div>
-                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="border mt-2 mybutton delete_mcq_button btn">delete</button>
-                                            <button type="button" style={{ display: "none" }} onClick={update_mcq_by_id} className="border mt-2 mybutton update_mcq_button btn mybutton">update</button>
-                                            <Button variant="contained" onClick={add_mcq} className="mybutton next_mcq_button">Next</Button>
+                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="border mt-2 mybutton delete_theory_button btn">delete</button>
+                                            <button type="button" style={{ display: "none" }} onClick={update_theory_question_by_id} className="border mt-2 mybutton update_theory_button btn mybutton">update</button>
+                                            <Button variant="contained" onClick={add_theory_question} className="mybutton next_theory_button">Next</Button>
                                         </div>
                                     </div>
                                 </div>
@@ -354,25 +283,38 @@ function AdminAddmcqsComponent(props) {
             </div>
             <br />
             {/* Alerts */}
-            <Snackbar open={openAlertDelete} autoHideDuration={5000} onClose={handleClose}>
+            <Snackbar open={openAlert} autoHideDuration={4000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success">
-                    Deleted Successfull
-                </Alert>
-            </Snackbar>
-            <Snackbar open={openAlertUpdate} autoHideDuration={5000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success">
-                    Updated Successfull
-                </Alert>
-            </Snackbar>
-            <Snackbar open={openAlertAdd} autoHideDuration={5000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success">
-                    Added Successfull
+                    {AlertValue}
                 </Alert>
             </Snackbar>
             {/* Dialog Box */}
-            <ConfirmDialog ConfirmDialog={ConfirmDialog} ConfirmDesc="Are you sure you want to delete this field?" handleClose={handleClose} />
-            {/*   Confirm Dialog Box   */}
             <ModelNotification DialogStatus={DialogStatus} DialogTitle={DialogTitle} DialogDesc={DialogDesc} handleClose={handleClose} DialogOk={DialogOk} />
+            {/*   Confirm Dialog Box   */}
+            <Dialog
+                open={ConfirmDialog}
+                TransitionComponent={Transition}
+                keepMounted
+                maxWidth="xs"
+                fullWidth="true"
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle id="alert-dialog-slide-title" className="py-3 text-center h3">Notification</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Are You sure you want to delete this field?
+                        </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        cancel
+                        </Button>
+                    <Button color="primary" onClick={delete_theory_question}>
+                        Yes
+                        </Button>
+                </DialogActions>
+            </Dialog>
         </section>
     )
 }
@@ -380,16 +322,16 @@ function AdminAddmcqsComponent(props) {
 const mapDispatchToProps = (dispatch) => {
     return {
         changeState: (data) => {
-            dispatch(add_mcq(data))
+            dispatch(add_theory(data))
         },
         updateState: (data) => {
-            dispatch(update_mcq(data))
+            dispatch(update_theory(data))
         },
-        deleteState: (data) => {
-            dispatch(remove_mcq(data))
+        deleteState: (index) => {
+            dispatch({ type: "remove_theory", index: index })
         }
     }
 }
 
 
-export default connect(null, mapDispatchToProps)(AdminAddmcqsComponent);
+export default connect(null, mapDispatchToProps)(AdminAddTheoryComponent);

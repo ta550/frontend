@@ -63,9 +63,37 @@ export const reset_mcq = () => {
 }
 
 
-export const add_mcqs_complete = (data) => {
+export const add_theory = (data) => {
     return {
-        type: "add_complete",
-        data: data
+        type: "add_theory",
+        question: data.question,
+        answer: data.answer,
+        marks: data.marks,
+        topics: data.topics
+    }
+}
+
+export const update_theory = (data) => {
+    return {
+        type: 'update_theory',
+        question: data.question,
+        answer: data.answer,
+        marks: data.marks,
+        topics: data.topics,
+        index: data.index
+
+    }
+}
+
+export const remove_theory = (data) => {
+    return {
+        type: "remove_theory",
+        index: data.index
+    }
+}
+
+export const reset_theory = (data) => {
+    return {
+        type: "reset_theory"
     }
 }

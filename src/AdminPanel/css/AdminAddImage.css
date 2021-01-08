@@ -112,6 +112,12 @@
   opacity: 0;
   cursor: pointer;
 }
+
+
+.MuiCircularProgress-root{
+  width: 100px !important;
+  height: 100px !important;
+}
 @media (min-width: 768px) {
   .image-uploader-wrapper .display-box {
     width: 600px;

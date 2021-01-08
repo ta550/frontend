@@ -9,7 +9,7 @@
 .add_mcq_child h1{
     margin-bottom: 50px;
 }
-.mcqDisplay {
+.mcqDisplay{
     margin-top: 10px;
     border: 1px solid #a9a9a9;
     width: 100%;
@@ -18,28 +18,28 @@
     align-items: center;
     border-radius: 10px;
 }
-.mcqDisplay p {
+.mcqDisplay p{
     padding-top: 5px;
     padding-left: 10px;
     padding-bottom: 0;
     font-size: .8rem;
     font-weight: 500;
 }
-.mcqDisplay__button {
+.mcqDisplay__button{
     margin-left: 20px;
 }
-.mcqDisplay__correct {
+.mcqDisplay__correct{
     color: green;
     transform: scale(1.2);
     margin-right: 5px;
 }
-.mcqDisplay__delete {
+.mcqDisplay__delete{
     color: red;
     transform: scale(1.2);
     margin-left: 5px;
     margin-right: 5px;
 }
-.MuiSvgIcon-root {
+.MuiSvgIcon-root{
     fill: currentColor;
     width: 1em;
     height: 1em;
@@ -61,7 +61,6 @@
     outline: none;
 }
 .form-control{
-    padding: 5px 2px;
     box-shadow: none !important;
     border: .1px solid rgba(0,0,0,0.4) !important;
     border-radius: 0 !important;
