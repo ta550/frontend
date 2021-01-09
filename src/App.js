@@ -1,5 +1,6 @@
+import React from 'react'
 import './App.css';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import AdminIndex from './AdminPanel/Pages/AdminIndex';
 import AdminAddmcqs from './AdminPanel/Pages/AdminAddmcqs'
 import AdminAddBoard from './AdminPanel/Pages/AdminAddBoard'

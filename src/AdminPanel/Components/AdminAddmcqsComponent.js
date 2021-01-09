@@ -37,7 +37,7 @@ function AdminAddmcqsComponent(props) {
     const [openAlertDelete, setOpenAlertDelete] = React.useState(false);
     const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
     const [openAlertAdd, setOpenAlertAdd] = React.useState(false);
-    const [ConfirmDialog, setConfirmDialog] = React.useState(false);
+    const [ConfirmDialogStatus, setConfirmDialogStatus] = React.useState(false);
     // Dialog Hooks
     const [DialogStatus, setDialogStatus] = React.useState(false);
     const [DialogDesc, setDialogDesc] = React.useState("Are you Sure?");
@@ -215,7 +215,7 @@ function AdminAddmcqsComponent(props) {
     const delete_mcq_by_id = () => {
         if (window.value != null) {
             const index = window.value;
-            setConfirmDialog(false)
+            setConfirmDialogStatus(false)
             props.deleteState(index)
             setQuestion("")
             setOptions([])
@@ -263,7 +263,7 @@ function AdminAddmcqsComponent(props) {
         setOpenAlertUpdate(false);
         setOpenAlertAdd(false);
         setDialogStatus(false);
-        setConfirmDialog(false)
+        setConfirmDialogStatus(false)
     };
     return (
         <section className="add_mcq_main pt-3">
@@ -322,7 +322,7 @@ function AdminAddmcqsComponent(props) {
                                             <button type="button" onClick={() => history.push("/admin/panel/add/images")} className="bg-success mx-2 mt-2 btn mybutton">Next Step</button>
                                         </div>
                                         <div>
-                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="border mt-2 mybutton delete_mcq_button btn">delete</button>
+                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialogStatus(true)} className="border mt-2 mybutton delete_mcq_button btn">delete</button>
                                             <button type="button" style={{ display: "none" }} onClick={update_mcq_by_id} className="border mt-2 mybutton update_mcq_button btn mybutton">update</button>
                                             <Button variant="contained" onClick={add_mcq} className="mybutton next_mcq_button">Next</Button>
                                         </div>
@@ -370,7 +370,7 @@ function AdminAddmcqsComponent(props) {
                 </Alert>
             </Snackbar>
             {/* Dialog Box */}
-            <ConfirmDialog ConfirmDialog={ConfirmDialog} ConfirmDesc="Are you sure you want to delete this field?" handleClose={handleClose} />
+            <ConfirmDialog ConfirmDialog={ConfirmDialogStatus} ConfirmDesc="Are you sure you want to delete this field?" handleClose={handleClose} />
             {/*   Confirm Dialog Box   */}
             <ModelNotification DialogStatus={DialogStatus} DialogTitle={DialogTitle} DialogDesc={DialogDesc} handleClose={handleClose} DialogOk={DialogOk} />
         </section>
