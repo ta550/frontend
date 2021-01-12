@@ -84,8 +84,6 @@ function AdminAddTheoryComponent(props) {
                 topics: topics
             }
             props.changeState(data)
-            setAlertValue("Added Successfull")
-            setOpenAlert(true)
             setQuestion("")
             setAnswer("")
             setTopics([])

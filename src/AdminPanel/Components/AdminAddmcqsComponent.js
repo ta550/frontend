@@ -2,11 +2,26 @@ import React, { useEffect, useState } from 'react'
 import '../css/AdminAddmcqs.css'
 import { FcPlus } from 'react-icons/fc'
 import $ from 'jquery'
-import { useSelector } from 'react-redux'
 import { MathpixLoader, MathpixMarkdown } from "mathpix-markdown-it";
-import { add_mcq,  remove_mcq, update_mcq } from '../../action/index'
-import { connect } from 'react-redux'
+import { add_mcq, remove_mcq, update_mcq } from '../../action/index'
+import { connect, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+// Dialog Box
+import Slide from '@material-ui/core/Slide';
+import ModelNotification from './ModelNotification'
+import ConfirmDialog from './ConfirmDialog'
+
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function AdminAddmcqsComponent(props) {
     // React State hooks
@@ -14,10 +29,26 @@ function AdminAddmcqsComponent(props) {
     const [topic, setTopic] = useState("");
     const [options, setOptions] = useState([]);
     const [topics, setTopics] = useState([])
+    const [openAlertDelete, setOpenAlertDelete] = React.useState(false);
+    const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
+    const [openAlertAdd, setOpenAlertAdd] = React.useState(false);
+    const [ConfirmDialogStatus, setConfirmDialog] = React.useState(false);
+    // Dialog Hooks
+    const [DialogStatus, setDialogStatus] = React.useState(false);
+    const [DialogDesc, setDialogDesc] = React.useState("Are you Sure?");
+    const [DialogTitle, setDialogTitle] = React.useState("Notification");
+    const [DialogOk, setDialogOk] = React.useState("Ok");
+
     // React Redux
     const mcqReducer = useSelector(state => state.mcqReducer)
     const boardReducer = useSelector(state => state.boardReducer)
     const history = useHistory();
+
+    useEffect(() => {
+        if (boardReducer.length === 0) {
+            history.push("/admin/panel/add/papers/")
+        }
+    }, [])
     // Math compiler
     // question input changehandler
     const questionChange = (e) => {
@@ -25,15 +56,15 @@ function AdminAddmcqsComponent(props) {
     }
     // SetTime Out Functions
     const mcqButtonChangeBorder = (e) => {
-        setTimeout(() =>{
-            for (var i = 0;i < mcqReducer.length; i++){
-                if (i === e){
-                    $(`.question${e}`).css({border: '3px solid black'})
-                }else{
-                    $(`.question${i}`).css({border: '3px solid white'})
+        setTimeout(() => {
+            for (var i = 0; i < mcqReducer.length; i++) {
+                if (i === e) {
+                    $(`.question${e}`).css({ border: '3px solid black' })
+                } else {
+                    $(`.question${i}`).css({ border: '3px solid white' })
                 }
             }
-        },100)
+        }, 100)
     }
     const SelectedOptionsBackgroundChange = optionsbyindex => {
         setTimeout(() => {
@@ -93,7 +124,8 @@ function AdminAddmcqsComponent(props) {
     const add_mcq = () => {
         const mark = $('.marks').val();
         if (question === "" || mark === "" || options.length === 0) {
-            alert("Please Fill out all fields")
+            setDialogDesc("All Fields Are Required?")
+            setDialogStatus(true)
         } else {
             const items = [...options];
             let status = 0;
@@ -114,7 +146,8 @@ function AdminAddmcqsComponent(props) {
                 setQuestion("")
                 setTopics([])
             } else {
-                alert('Choose the Correct Option')
+                setDialogDesc("Chose The correct Option")
+                setDialogStatus(true)
             }
         }
     }
@@ -140,7 +173,8 @@ function AdminAddmcqsComponent(props) {
         if (window.value != null) {
             const mark = $('.marks').val();
             if (question === "" || mark === "" || options.length === 0) {
-                alert("Please Fill out all fields")
+                setDialogDesc("All Fields Are Required?")
+                setDialogStatus(true)
             } else {
                 const items = [...options];
                 let status = 0;
@@ -156,34 +190,38 @@ function AdminAddmcqsComponent(props) {
                     setQuestion("")
                     setOptions([])
                     setTopics([])
+                    setOpenAlertUpdate(true)
                     mcqButtonChangeBorder(-1)
                     $('.next_mcq_button').css("display", "inline")
                     $('.update_mcq_button').css("display", "none");
                     $('.delete_mcq_button').css("display", "none");
                 } else {
-                    alert('Choose the Correct Option')
+                    setDialogDesc("Chose The Correct Option")
+                    setDialogStatus(true)
                 }
             }
         } else {
-            alert("Please Select Mcq for Delete")
+            setDialogDesc("Select MCQ For Delete?")
+            setDialogStatus(true)
         }
     }
     // Delete Mcq By its Id
     const delete_mcq_by_id = () => {
         if (window.value != null) {
-            if (window.confirm("Are you sure you want to delete this field?")) {
-                const index = window.value;
-                props.deleteState(index)
-                setQuestion("")
-                setOptions([])
-                setTopics([])
-                mcqButtonChangeBorder(-1)
-                $('.next_mcq_button').css("display", "inline")
-                $('.update_mcq_button').css("display", "none");
-                $('.delete_mcq_button').css("display", "none");
-            }
+            const index = window.value;
+            setConfirmDialog(false)
+            props.deleteState(index)
+            setQuestion("")
+            setOptions([])
+            setTopics([])
+            mcqButtonChangeBorder(-1)
+            setOpenAlertDelete(true);
+            $('.next_mcq_button').css("display", "inline")
+            $('.update_mcq_button').css("display", "none");
+            $('.delete_mcq_button').css("display", "none");
         } else {
-            alert("Please Select Mcq for Delete")
+            setDialogDesc("Please Select MCQ for Delete")
+            setDialogStatus(true)
         }
     }
     // Add Topics
@@ -201,11 +239,30 @@ function AdminAddmcqsComponent(props) {
     const question_output_hide_show = () => {
         $('.question_output').slideToggle();
     }
-
+    // Create JSON
+    const send_json = () => {
+        const array = new Array(boardReducer[0]);
+        mcqReducer.map((item, i) => {
+            array.push(item)
+        })
+        const jsonData = JSON.stringify(array);
+        document.write(jsonData)
+    }
+    // Close Alert
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlertDelete(false);
+        setOpenAlertUpdate(false);
+        setOpenAlertAdd(false);
+        setDialogStatus(false);
+        setConfirmDialog(false)
+    };
     return (
-        <section className="add_mcq_main">
+        <section className="add_mcq_main pt-3">
             {/* Add MCQs Child  */}
-            <div className="add_mcq_child container-fluid pt-2">
+            <div className="add_mcq_child container-fluid">
                 <div className="row">
                     <div className="col-lg-2 mb-5 mcqs_list_main ">
                         <div className="bg-white py-3 container-fluid" style={{ borderRadius: '20px', boxShadow: '0px 0px 2px black' }}>
@@ -220,15 +277,17 @@ function AdminAddmcqsComponent(props) {
                         <div className="table-responsive mx-auto">
                             <table className="table p-0 m-0">
                                 <tbody>
-                                    <tr className="text-center">
-                                        <td style={{ whiteSpace: 'nowrap' }}>{boardReducer[0].system}</td>
-                                        <td style={{ whiteSpace: 'nowrap' }}>{boardReducer[0].board}</td>
-                                        <td style={{ whiteSpace: 'nowrap' }}>{boardReducer[0].subject}</td>
-                                        <td style={{ whiteSpace: 'nowrap' }}>{boardReducer[0].year}</td>
-                                        <td style={{ whiteSpace: 'nowrap' }}>{boardReducer[0].month}</td>
-                                        <td style={{ whiteSpace: 'nowrap' }}>{boardReducer[0].series}</td>
-                                        <td style={{ whiteSpace: 'nowrap' }}>{boardReducer[0].paper}</td>
-                                    </tr>
+                                    {boardReducer.map((item, i) => (
+                                        <tr className="text-center">
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item.system}</td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item.board}</td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item.subject}</td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item.year}</td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item.month}</td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item.series}</td>
+                                            <td style={{ whiteSpace: 'nowrap' }}>{item.paper}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -257,9 +316,9 @@ function AdminAddmcqsComponent(props) {
                                             <button type="button" onClick={() => history.push("/admin/panel/add/images")} className="bg-success mx-2 mt-2 btn mybutton">Next Step</button>
                                         </div>
                                         <div>
-                                            <button type="button" style={{ display: "none" }} onClick={delete_mcq_by_id} className="border mt-2 mybutton delete_mcq_button btn">delete</button>
+                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="border mt-2 mybutton delete_mcq_button btn">delete</button>
                                             <button type="button" style={{ display: "none" }} onClick={update_mcq_by_id} className="border mt-2 mybutton update_mcq_button btn mybutton">update</button>
-                                            <button type="button" onClick={add_mcq} className="mt-2 mybutton next_mcq_button btn">Next</button>
+                                            <Button variant="contained" onClick={add_mcq} className="mybutton next_mcq_button">Next</Button>
                                         </div>
                                     </div>
                                 </div>
@@ -285,10 +344,24 @@ function AdminAddmcqsComponent(props) {
                             </div>
                         </form>
                     </div>
-
                 </div>
             </div>
             <br />
+            {/* Alerts */}
+            <Snackbar open={openAlertDelete} autoHideDuration={5000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success">
+                    Deleted Successfull
+                </Alert>
+            </Snackbar>
+            <Snackbar open={openAlertUpdate} autoHideDuration={5000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success">
+                    Updated Successfull
+                </Alert>
+            </Snackbar>
+            {/* Dialog Box */}
+            <ConfirmDialog delete_mcq_by_id={delete_mcq_by_id} ConfirmDialog={ConfirmDialogStatus} ConfirmDesc="Are you sure you want to delete this field?" handleClose={handleClose} />
+            {/*   Confirm Dialog Box   */}
+            <ModelNotification DialogStatus={DialogStatus} DialogTitle={DialogTitle} DialogDesc={DialogDesc} handleClose={handleClose} DialogOk={DialogOk} />
         </section>
     )
 }

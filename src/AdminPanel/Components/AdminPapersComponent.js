@@ -29,21 +29,21 @@ function createData(system, board, subject, year, month, series, paper, operatio
 }
 
 const rows = [
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM1', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM2', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM3', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM4', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM5', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM6', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM7', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM8', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM9', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM10', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM11', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM12', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM13', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM14', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
+  createData('SYSTEM15', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -157,8 +157,10 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { selected } = props;
+  const numSelected = selected.length;
   const history = useHistory();
+  console.log(selected)
   return (
     <Toolbar
       className={clsx(classes.root, {
@@ -201,10 +203,6 @@ const EnhancedTableToolbar = (props) => {
             ))}
     </Toolbar>
   );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -277,6 +275,7 @@ export default function AdminPapersComponent() {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    setSelected([])
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -295,7 +294,7 @@ export default function AdminPapersComponent() {
   return (
     <div className={`${classes.root} container d-flex align-items-center flex-column mt-5`}>
       <Paper className={`${classes.paper} `}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar selected={selected} />
         <TableContainer>
           <Table
             className={`${classes.table} text-white`}

@@ -8,7 +8,7 @@ import AdminAddImages from './AdminPanel/Pages/AdminAddImages'
 import AdminChoiceAndTheory from './AdminPanel/Pages/AdminChoiceAndTheory'
 import AdminPapers from './AdminPanel/Pages/AdminPapers'
 import AdminAddTheory from './AdminPanel/Pages/AdminAddTheory.js'
-
+import BackendTest from './BackendTest'
 // Importing Bootstrap
 import 'bootstrap/dist/css/bootstrap.css'
 
@@ -23,6 +23,7 @@ function App() {
         <Route  exact path="/admin/panel/add/papers" component={AdminAddBoard} />
         <Route  exact path="/admin/panel/add/theory" component={AdminAddTheory} />
         <Route  exact path="/admin/panel/add/images" component={AdminAddImages} />
+        <Route  exact path="/backend/test" component={BackendTest} />
       </Switch>
     </Router>
   );
