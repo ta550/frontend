@@ -14,7 +14,7 @@ function BackendTest() {
         })
         .catch(err => console.log(err))
         
-        fetch("http://exam-be://dashboard/de/test")
+        fetch("http://exam105-be://dashboard/de/test")
         .then(res => res.json())
         .then(res => {
             setRes(res)
