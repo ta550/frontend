@@ -30,6 +30,10 @@ function AdminIndex(props) {
         if (loginReducer){
             history.push("/admin/panel/papers")
         }
+        fetch('http://18.136.104.36:9090/dashboard/de/test')
+        .then((res)=> res.json())
+        .then(res => console.log(res))
+        .catch((err)=> console.log(err))
     }, [])
 
 
