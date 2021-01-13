@@ -1,8 +1,8 @@
 # build env
-FROM node:12.11.1-alpine as build
+FROM node:14.15.4-alpine as build
 WORKDIR /app
 COPY package*.json ./
-RUN apk add --no-cache git
+# RUN apk add --no-cache git
 RUN npm ci
 RUN npm install -g
 COPY . ./
