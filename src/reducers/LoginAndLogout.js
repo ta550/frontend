@@ -1,9 +1,9 @@
-const setLogin = (state = false , action) => {
+const setLogin = (state = "" , action) => {
     switch (action.type){
         case "login":
-            return true;
+            return action.token;
         case "logout":
-            return false;
+            return "";
         default:
             return state
     }

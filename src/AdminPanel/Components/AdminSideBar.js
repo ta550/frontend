@@ -6,20 +6,18 @@ import '../css/AdminSideBar.css'
 import $ from 'jquery'
 import {useHistory} from 'react-router-dom'
 import { connect , useSelector } from 'react-redux'
-import { setLogout } from '../../action/index'
-
 
 function AdminSideBar(props) {
     const history = useHistory();
     const loginReducer = useSelector(state => state.loginReducer)
     useEffect(()=> {
-        if (!loginReducer){
+        if (loginReducer === ""){
             history.push("/admin/panel/")
         }
     }, [])
     const sidebar_open = () => {
         $('.Admin_Sidebar').toggleClass("open_sidebar")
-        $('.Admin_Sidebar').blur(()=>{
+        $('body').blur(()=>{
             $(this).toggleClass("open_sidebar")
         })
     }
@@ -32,9 +30,9 @@ function AdminSideBar(props) {
         <section className="Admin_Sidebar">
         <ul className="sidebar_ul">
                 <li className="admin_panel_heading_li"><h4 exact to="/admin/panel/">Admin Panel</h4></li>
-                <li><NavLink exact to="/admin/panel/papers"><FcHome /> Home</NavLink></li>
+                <li><NavLink exact to="/admin/panel/papers"><FcTodoList /> Papers List</NavLink></li>
                 <li><NavLink exact to="/admin/panel/add/papers"><FcPlus /> Add Paper</NavLink></li>
-                <li><NavLink exact to="/admin/panel/papers"><FcTodoList /> Paper List</NavLink></li>
+                <li><NavLink exact to="/admin/panel/add/images"><FcPlus /> Add Images</NavLink></li>
                 <li onClick={logout}><NavLink to="#"><FcDeleteDatabase /> Logout</NavLink></li>
             </ul>
             <BsFillCaretRightFill className="sidebar_open_icon" onClick={sidebar_open} />

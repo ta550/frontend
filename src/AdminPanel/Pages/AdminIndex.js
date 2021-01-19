@@ -10,6 +10,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import axios from 'axios'
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -30,10 +32,6 @@ function AdminIndex(props) {
         if (loginReducer){
             history.push("/admin/panel/papers")
         }
-        fetch('http://18.136.104.36:9090/dashboard/de/test')
-        .then((res)=> res.json())
-        .then(res => console.log(res))
-        .catch((err)=> console.log(err))
     }, [])
 
 
@@ -51,12 +49,23 @@ function AdminIndex(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (values.username === "admin" && values.password === "password"){
-            props.set_login();
-            history.push("/admin/panel/papers")
-        }else{
+
+        axios({
+            method: 'post',
+            url: '/login',
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+            },
+            data: `username=${values.username}&useremail=${values.password}`,
+          })
+          .then(res => {
+              props.set_login(res.data.token);
+              history.push("/admin/panel/papers")
+          })
+          .catch(err => 
             setDialogStatus(true)
-        }
+          )
+        
     }
 
 
@@ -72,6 +81,7 @@ function AdminIndex(props) {
                     <Input
                         id="filled-adornment-password"
                         type={values.showPassword ? 'text' : 'password'}
+                        required
                         value={values.password}
                         onChange={handleChange('password')}
                         endAdornment={
@@ -119,8 +129,8 @@ function AdminIndex(props) {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        set_login: () => {
-            dispatch({type: 'login'})
+        set_login: (token) => {
+            dispatch({type: 'login', token: token})
         }
     }
 }

@@ -17,6 +17,18 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import ModelNotification from './ModelNotification'
+import LinearProgressWithLabel from './LinearProgressBarWithLabel'
+import Backdrop from '@material-ui/core/Backdrop';
+import { makeStyles } from '@material-ui/core/styles';
+import { ProgressBar } from 'react-bootstrap';
+
+
+const useStyles = makeStyles((theme) => ({
+   backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+   },
+}));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -27,20 +39,22 @@ function Alert(props) {
 }
 
 function AdminAddTheoryComponent(props) {
+    const classes = useStyles();
     // React State hooks
     const [question, setQuestion] = useState("")
     const [answer, setAnswer] = useState("")
     const [topic, setTopic] = useState("");
     const [topics, setTopics] = useState([])
-    const [openAlert, setOpenAlert] = React.useState(false);
-    const [AlertValue, setAlertValue] = React.useState(false);
-    const [ConfirmDialog, setConfirmDialog] = React.useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [AlertValue, setAlertValue] = useState(false);
+    const [ConfirmDialog, setConfirmDialog] = useState(false);
+    const [ProgressBarStatus , setProgressBarStatus] = useState(false)
     // Dialog Hooks
-    const [DialogStatus, setDialogStatus] = React.useState(false);
-    const [DialogDesc, setDialogDesc] = React.useState("Are you Sure?");
-    const [DialogTitle, setDialogTitle] = React.useState("Notification");
-    const [DialogOk, setDialogOk] = React.useState("Ok");
-
+    const [DialogStatus, setDialogStatus] = useState(false);
+    const [DialogDesc, setDialogDesc] = useState("Are you Sure?");
+    const [DialogTitle, setDialogTitle] = useState("Notification");
+    const [DialogOk, setDialogOk] = useState("Ok");
+    const [progress, setProgress] = useState(10);
     // React Redux
     const theoryReducer = useSelector(state => state.theoryReducer)
     const boardReducer = useSelector(state => state.boardReducer)
@@ -52,6 +66,12 @@ function AdminAddTheoryComponent(props) {
         }
         $('.answer_output').slideUp();
         $('.question_output').slideUp();
+        const timer = setInterval(() => {
+            setProgress((prevProgress) => (prevProgress >= 90 ? 10 : prevProgress + 7));
+        }, 800);
+        return () => {
+            clearInterval(timer);
+        };
     }, [])
     // Math compiler
     // question input changehandler
@@ -227,14 +247,14 @@ function AdminAddTheoryComponent(props) {
                             <div className="form-group">
                                 <textarea className="form-control" placeholder="Enter Question" rows="5" value={question} onChange={questionChange} required></textarea>
                             </div>
-                            <button type="button" onClick={question_output_hide_show} className="btn btn-sm mybutton py-1 mb-2 px-2 d-flex ml-auto m-0">hide / show</button>
+                            <button type="button" onClick={question_output_hide_show} className="btn btn-info btn-sm mybutton py-1 mb-2 px-2 d-flex ml-auto m-0">hide / show</button>
                             <div className="p-2 form-group question_output bg-info text-white col-12" style={{ height: "160px", borderRadius: "5px", overflowY: 'scroll' }}>
                                 <MathpixLoader>
                                     <MathpixMarkdown text={question} />
                                 </MathpixLoader>
                             </div>
                             <textarea className="form-control" placeholder="Enter Answer" rows="5" value={answer} onChange={(e) => setAnswer(e.target.value)} required></textarea>
-                            <button type="button" onClick={answer_output_hide_show} className="btn btn-sm mybutton py-1 my-2 px-2 d-flex ml-auto m-0">hide / show</button>
+                            <button type="button" onClick={answer_output_hide_show} className="btn btn-info btn-sm mybutton py-1 my-2 px-2 d-flex ml-auto m-0">hide / show</button>
                             <div className="p-2 form-group answer_output bg-info text-white col-12" style={{ height: "160px", borderRadius: "5px", overflowY: 'scroll' }}>
                                 <MathpixLoader>
                                     <MathpixMarkdown text={answer} />
@@ -247,11 +267,12 @@ function AdminAddTheoryComponent(props) {
                                     <div className="all_mcq_operations_button d-flex mx-auto justify-content-between w-100 ">
                                         <div>
                                             <button type="button" onClick={() => history.push("/admin/panel/add/images")} className="bg-success mx-2 mt-2 btn mybutton">Next Step</button>
+                                            <button type="button" className="bg-success mx-2 mt-2 btn mybutton">Finish</button>
                                         </div>
                                         <div>
-                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="border mt-2 mybutton delete_theory_button btn">delete</button>
-                                            <button type="button" style={{ display: "none" }} onClick={update_theory_question_by_id} className="border mt-2 mybutton update_theory_button btn mybutton">update</button>
-                                            <Button variant="contained" onClick={add_theory_question} className="mybutton next_theory_button">Next</Button>
+                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="bg-info border mt-2 mybutton delete_theory_button btn">delete</button>
+                                            <button type="button" style={{ display: "none" }} onClick={update_theory_question_by_id} className="border bg-info mt-2 mybutton update_theory_button btn mybutton">update</button>
+                                            <Button variant="contained" onClick={add_theory_question} className="mybutton bg-info next_theory_button">Next</Button>
                                         </div>
                                     </div>
                                 </div>
@@ -288,7 +309,7 @@ function AdminAddTheoryComponent(props) {
             </Snackbar>
             {/* Dialog Box */}
             <ModelNotification DialogStatus={DialogStatus} DialogTitle={DialogTitle} DialogDesc={DialogDesc} handleClose={handleClose} DialogOk={DialogOk} />
-            {/*   Confirm Dialog Box   */}
+            {/* Confirm Dialog Box */}
             <Dialog
                 open={ConfirmDialog}
                 TransitionComponent={Transition}
@@ -313,6 +334,10 @@ function AdminAddTheoryComponent(props) {
                         </Button>
                 </DialogActions>
             </Dialog>
+            {/* Progress Bar */}
+            <Backdrop className={classes.backdrop} open={ProgressBarStatus}>
+                <LinearProgressWithLabel value={progress} />;
+            </Backdrop>
         </section>
     )
 }

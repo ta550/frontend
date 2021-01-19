@@ -21,8 +21,6 @@ form.board_form{
 	display:inline-block;
 	cursor:pointer;
     color:#ffffff !important;
-    background: var(--info) !important;
-    padding:7px 25px !important;
     border-radius: 5px !important;
     outline: none !important;
 	text-decoration:none;
