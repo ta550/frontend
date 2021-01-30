@@ -86,7 +86,7 @@ function AdminIndex(props) {
                 <div style={{ width: '60%', margin: '5px auto', display: 'flex' }}>
                     <TextField onChange={handleChange("username")} value={values.username} id="standard-basic" label="User Name" className="AdminUserField w-100" type="text" required />
                 </div><br />
-                <div style={{ width: '60%', margin: '0x auto', display: 'flex' }}>
+                <div style={{ width: '60%', margin: '0 auto', display: 'flex' }}>
                     <TextField onChange={handleChange("useremail")} value={values.useremail} id="standard-basic" label="User Email" className="AdminUserField w-100" type="text" required />
                 </div><br />
                 {/* <FormControl style={{ width: '60%', margin: '0 auto', display: 'flex' }} variant="fille">
