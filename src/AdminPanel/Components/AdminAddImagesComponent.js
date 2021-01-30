@@ -97,6 +97,7 @@ const AdminAddImagesComponent = () => {
                   id="upload-image-input"
                   className="upload-image-input"
                   multiple
+                  accept="image/*"
                   onDrop={handleDrop}
                   onDragEnter={handleDragEnter}
                   onDragOver={handleDragOver}

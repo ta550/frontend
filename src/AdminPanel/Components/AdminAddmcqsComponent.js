@@ -278,35 +278,34 @@ function AdminAddmcqsComponent(props) {
     };
     // Finish Exam
     const finish_paper = () => {
-        setProgressBarStatus(true)
-        const data = new Array(boardReducer[0]);
-        mcqReducer.map((item, i) => {
-            data.push(item)
-        })
-
-        fetch("/dashboard/de/questions",{
-            method: 'POST', 
-            headers: {
-               'Content-Type': 'application/json',
-               'Authorization': `Bearer ${loginReducer}`
-            },
-            body: JSON.stringify(data),
-        })
-        .then(res => res.json())
-        .then(res => {
-            console.log(res)
-            props.resetState();
-            props.resetBoard();
-            setProgressBarStatus(false)
-            history.push("/admin/panel/papers")
-        })
-        .catch((err)=> {
-                console.log(err)
-                setProgressBarStatus(false)
-                setDialogDesc("Some went wrong. please try Again..")
-                setDialogStatus(true)
-            }
-        )
+        // setProgressBarStatus(true)
+        // const data = new Array(boardReducer[0]);
+        // mcqReducer.map((item, i) => {
+        //     data.push(item)
+        // })
+        // fetch("/dashboard/de/questions",{
+        //     method: 'POST', 
+        //     headers: {
+        //        'Content-Type': 'application/json',
+        //        'Authorization': `Bearer ${loginReducer}`
+        //     },
+        //     body: JSON.stringify(data),
+        // })
+        // .then(res => res.json())
+        // .then(res => {
+        //     console.log(res)
+        //     props.resetState();
+        //     props.resetBoard();
+        //     setProgressBarStatus(false)
+        //     history.push("/admin/panel/papers")
+        // })
+        // .catch((err)=> {
+        //         console.log(err)
+        //         setProgressBarStatus(false)
+        //         setDialogDesc("Some went wrong. please try Again..")
+        //         setDialogStatus(true)
+        //     }
+        // )
     }
     return (
         <section className="add_mcq_main pt-3">

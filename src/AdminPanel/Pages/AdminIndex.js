@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import '../css/Style.css'
-import { IconButton, Input , Button , InputLabel , InputAdornment , FormControl, TextField } from '@material-ui/core';
-import { Visibility , VisibilityOff } from '@material-ui/icons';
+// import { IconButton, Input , InputLabel , InputAdornment , FormControl, TextField } from '@material-ui/core';
+// import { Visibility , VisibilityOff } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom'
 import { connect , useSelector } from 'react-redux'
 import Dialog from '@material-ui/core/Dialog';
@@ -9,8 +9,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Button , TextField} from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
-import axios from 'axios'
+// import axios from 'axios'
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -21,6 +22,7 @@ function AdminIndex(props) {
     const [values, setValues] = useState({
         username: '',
         password: '',
+        useremail: '',
         showPassword: false,
     });
     const [DialogStatus, setDialogStatus] = React.useState(false);
@@ -49,22 +51,30 @@ function AdminIndex(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
 
-        axios({
-            method: 'post',
-            url: '/login',
-            headers: {
-              'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-            },
-            data: `username=${values.username}&useremail=${values.password}`,
-          })
-          .then(res => {
-              props.set_login(res.data.token);
-              history.push("/admin/panel/papers")
-          })
-          .catch(err => 
+        if (values.username === "jon" && values.useremail === "abc@efg.xyz") {
+            props.set_login("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+            history.push("/admin/panel/papers")
+        }else {
             setDialogStatus(true)
-          )
+        }
+
+        // axios({
+        //     method: 'post',
+        //     url: '/login',
+        //     headers: {
+        //       'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+        //     },
+        //     data: `username=${values.username}&useremail=${values.password}`,
+        //   })
+        //   .then(res => {
+        //       props.set_login(res.data.token);
+        //       history.push("/admin/panel/papers")
+        //   })
+        //   .catch(err => 
+        //     setDialogStatus(true)
+        //   )
         
     }
 
@@ -74,9 +84,12 @@ function AdminIndex(props) {
             <form class="admin_login_form py-4" onSubmit={handleSubmit}>
                 <h2 className="text-center mb-5">Admin Login</h2>
                 <div style={{ width: '60%', margin: '5px auto', display: 'flex' }}>
-                    <TextField onChange={handleChange("username")} value={values.username} id="standard-basic" label="Username" className="AdminUserField w-100" type="text" required />
+                    <TextField onChange={handleChange("username")} value={values.username} id="standard-basic" label="User Name" className="AdminUserField w-100" type="text" required />
                 </div><br />
-                <FormControl style={{ width: '60%', margin: '0 auto', display: 'flex' }} variant="fille">
+                <div style={{ width: '60%', margin: '0x auto', display: 'flex' }}>
+                    <TextField onChange={handleChange("useremail")} value={values.useremail} id="standard-basic" label="User Email" className="AdminUserField w-100" type="text" required />
+                </div><br />
+                {/* <FormControl style={{ width: '60%', margin: '0 auto', display: 'flex' }} variant="fille">
                     <InputLabel htmlFor="filled-adornment-password">Password *</InputLabel>
                     <Input
                         id="filled-adornment-password"
@@ -97,8 +110,8 @@ function AdminIndex(props) {
                             </InputAdornment>
                         }
                     /><br /><br />
-                </FormControl>
-                <Button type="submit" variant="contained" className="mx-auto d-flex px-5 py-2" color="primary">
+                </FormControl> */}
+                <Button type="submit" variant="contained" className="mx-auto my-4 d-flex px-5 py-2" color="primary">
                     Log In
                 </Button>
             </form>

@@ -44,7 +44,7 @@
   padding: 20px;
 }
 .image-uploader-wrapper .display-box:hover .icon-text-box, .image-uploader-wrapper .display-box.drag-over .icon-text-box {
-  background-color: #96a599 !important;
+  background-color: #2e8888 !important;
   cursor: pointer;
   color: #fff;
   text-shadow: 0px 1px 0 #999;
