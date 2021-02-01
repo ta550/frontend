@@ -87,8 +87,8 @@ function AdminAddBoardComponent(props) {
     return (
         <section className="add_board_main">
             <div className="add_board_child px-md-5 px-4">
-                <h1 className="text-center board_titile">Add Paper</h1>
-                <form className="board_form mx-auto mt-5" onSubmit={submit_data}>
+                <h1 className="text-center board_titile py-3">Add Paper</h1>
+                <form className="board_form mx-auto" onSubmit={submit_data}>
                     <div className="form-group">
                         <label htmlFor="">Enter System :</label>
                         <input type="text" autoFocus className="form-control" name="system" onChange={change_input} value={paper.system} required/>

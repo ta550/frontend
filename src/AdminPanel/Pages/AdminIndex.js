@@ -12,7 +12,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button , TextField} from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
 // import axios from 'axios'
-
+import axios from 'axios'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -51,30 +51,21 @@ function AdminIndex(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-
-        if (values.username === "jon" && values.useremail === "abc@efg.xyz") {
-            props.set_login("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
-            history.push("/admin/panel/papers")
-        }else {
+        axios({
+            method: 'post',
+            url: '/superuser/login',
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+            },
+            data: `username=${values.username}&useremail=${values.useremail}`,
+          })
+          .then(res => {
+              props.set_login(res.data.token);
+              history.push("/admin/panel/papers")
+          })
+          .catch(err => 
             setDialogStatus(true)
-        }
-
-        // axios({
-        //     method: 'post',
-        //     url: '/login',
-        //     headers: {
-        //       'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-        //     },
-        //     data: `username=${values.username}&useremail=${values.password}`,
-        //   })
-        //   .then(res => {
-        //       props.set_login(res.data.token);
-        //       history.push("/admin/panel/papers")
-        //   })
-        //   .catch(err => 
-        //     setDialogStatus(true)
-        //   )
+          )
         
     }
 

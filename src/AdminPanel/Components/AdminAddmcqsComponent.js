@@ -43,6 +43,7 @@ function AdminAddmcqsComponent(props) {
     const [openAlertDelete, setOpenAlertDelete] = React.useState(false);
     const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
     const [ConfirmDialogStatus, setConfirmDialog] = React.useState(false);
+    const [markdownFontSize, setMarkdownFontSize] = React.useState("14px");
     // Dialog Hooks
     const [DialogStatus, setDialogStatus] = React.useState(false);
     const [DialogDesc, setDialogDesc] = React.useState("Are you Sure?");
@@ -142,7 +143,10 @@ function AdminAddmcqsComponent(props) {
     const add_mcq = () => {
         const mark = $('.marks').val();
         if (question === "" || mark === "" || options.length === 0) {
-            setDialogDesc("All Fields Are Required?")
+            if (question === "") { setDialogDesc("Question Field Are Required!")  }
+            else if (mark === "") { setDialogDesc("Marks Field Are Required!")  }
+            else { setDialogDesc("Options are Missing!") }
+            
             setDialogStatus(true)
         } else {
             const items = [...options];
@@ -278,34 +282,34 @@ function AdminAddmcqsComponent(props) {
     };
     // Finish Exam
     const finish_paper = () => {
-        // setProgressBarStatus(true)
-        // const data = new Array(boardReducer[0]);
-        // mcqReducer.map((item, i) => {
-        //     data.push(item)
-        // })
-        // fetch("/dashboard/de/questions",{
-        //     method: 'POST', 
-        //     headers: {
-        //        'Content-Type': 'application/json',
-        //        'Authorization': `Bearer ${loginReducer}`
-        //     },
-        //     body: JSON.stringify(data),
-        // })
-        // .then(res => res.json())
-        // .then(res => {
-        //     console.log(res)
-        //     props.resetState();
-        //     props.resetBoard();
-        //     setProgressBarStatus(false)
-        //     history.push("/admin/panel/papers")
-        // })
-        // .catch((err)=> {
-        //         console.log(err)
-        //         setProgressBarStatus(false)
-        //         setDialogDesc("Some went wrong. please try Again..")
-        //         setDialogStatus(true)
-        //     }
-        // )
+        setProgressBarStatus(true)
+        const data = new Array(boardReducer[0]);
+        mcqReducer.map((item, i) => {
+            data.push(item)
+        })
+        fetch("/dashboard/de/questions",{
+            method: 'POST', 
+            headers: {
+               'Content-Type': 'application/json',
+               'Authorization': `Bearer ${loginReducer}`
+            },
+            body: JSON.stringify(data),
+        })
+        .then(res => res.json())
+        .then(res => {
+            console.log(res)
+            props.resetState();
+            props.resetBoard();
+            setProgressBarStatus(false)
+            history.push("/admin/panel/papers")
+        })
+        .catch((err)=> {
+                console.log(err)
+                setProgressBarStatus(false)
+                setDialogDesc("Some went wrong. please try Again..")
+                setDialogStatus(true)
+            }
+        )
     }
     return (
         <section className="add_mcq_main pt-3">
@@ -343,8 +347,17 @@ function AdminAddmcqsComponent(props) {
                             <div className="form-group">
                                 <textarea className="form-control" placeholder="Enter Question" rows="5" value={question} onChange={questionChange} required></textarea>
                             </div>
-                            <button type="button" onClick={question_output_hide_show} className="btn btn-sm btn-info mybutton mb-2 d-flex ml-auto">Hide / Show</button>
-                            <div className="p-2 form-group question_output bg-info col-12" style={{ height: "160px", borderRadius: "5px", overflowY: 'scroll' }}>
+                            <div className="row">
+                                <select value={markdownFontSize} onChange={(e) => setMarkdownFontSize(e.target.value) } className="small ml-3" style={{height: '25px'}}>
+                                    <option value="12px">12px</option>
+                                    <option value="13px">13px</option>
+                                    <option value="14px">14px</option>
+                                    <option value="15px">15px</option>
+                                    <option value="16px">16px</option>
+                                </select>
+                                <button type="button" onClick={question_output_hide_show} className="btn mr-3 btn-sm btn-info mybutton mb-2 d-flex ml-auto">Hide / Show</button>
+                            </div>
+                            <div className="p-2 form-group question_output col-12" style={{fontSize: markdownFontSize}}>
                                 <MathpixLoader>
                                     <MathpixMarkdown text={question} />
                                 </MathpixLoader>
@@ -365,7 +378,7 @@ function AdminAddmcqsComponent(props) {
                                             <button type="button" onClick={finish_paper} className="bg-success mx-2 mt-2 btn mybutton">Finish</button>
                                         </div>
                                         <div>
-                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="border mt-2 mybutton delete_mcq_button btn btn-info">delete</button>
+                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="border mx-2 mt-2 mybutton delete_mcq_button btn btn-info">delete</button>
                                             <button type="button" style={{ display: "none" }} onClick={update_mcq_by_id} className="border mt-2 mybutton update_mcq_button btn mybutton btn-info">update</button>
                                             <Button variant="contained" onClick={add_mcq} className="bg-info mybutton next_mcq_button">Next</Button>
                                         </div>
@@ -387,7 +400,7 @@ function AdminAddmcqsComponent(props) {
                                 </div>
                                 <div className="row">
                                     {topics.map((item, i) => {
-                                        return <div key={i} className={`topicDisplay pb-1 h5 `}><p className="option_text my-1">{item.topic}</p><span className="delete_topic" onClick={() => deleteTopic(i)}>&times;</span></div>
+                                        return <div key={i} className={`topicDisplay`} style={{fontSize: '12px',fontWeight: '500'}}><p className="option_text my-1">{item.topic}</p><span className="delete_topic" style={{fontSize: '16px'}} onClick={() => deleteTopic(i)}>&times;</span></div>
                                     })}
                                 </div>
                             </div>
