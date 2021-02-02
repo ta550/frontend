@@ -34,7 +34,7 @@ function ConfirmDialog(props) {
                         </Button>
                 <Button onClick={props.delete_mcq_by_id} color="primary">
                     Yes
-                        </Button>
+                    </Button>
             </DialogActions>
         </Dialog>
     )

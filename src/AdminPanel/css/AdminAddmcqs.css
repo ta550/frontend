@@ -12,11 +12,12 @@
 .mcqDisplay{
     margin-top: 10px;
     border: 1px solid #a9a9a9;
-    width: 100%;
+    width: 100% !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-radius: 10px;
+    padding: 0 !important;
 }
 .mcqDisplay p{
     padding-top: 5px;
@@ -64,11 +65,12 @@
     box-shadow: none !important;
     border: .1px solid rgba(0,0,0,0.4) !important;
     border-radius: 0 !important;
+    font-size: 15px !important;
 }
 input:focus, textarea:focus{
     outline: none !important;
     box-shadow: none !important;
-    background: rgba(0,0,0,.1) !important;
+    background: rgba(0,0,0,.05) !important;
 }
 .mcqs_list_main button{
 	background-color:#0698bd;
