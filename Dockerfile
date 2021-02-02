@@ -1,14 +1,12 @@
 # build env
-#FROM node:13.12.0-alpine as build
-FROM node:12.11.1 as build
+FROM node:14.15.4-alpine as build
 WORKDIR /app
-COPY package.json yarn.lock ./
-# RUN apk add --no-cache git
-# RUN npm ci
-RUN yarn
+COPY package*.json ./
+RUN apk add --no-cache git
+RUN npm ci
+RUN npm install -g
 COPY . ./
-# RUN npm run build
-RUN yarn build
+RUN npm run build
 
 # production env
 FROM nginx:1.17.8-alpine

@@ -5,11 +5,12 @@ import {connect} from 'react-redux'
 import {useHistory} from 'react-router-dom'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import ModelNotification from './ModelNotification'
 
 function AdminAddBoardComponent(props) {
     const history = useHistory();
     const [startDate, setStartDate] = useState(new Date());
+    const [notificationStatus, setNotificationStatus] = useState(false)
     const [paper, setPaper] = useState({
         system: '',
         board: '',
@@ -22,8 +23,13 @@ function AdminAddBoardComponent(props) {
 
     const submit_data = (e) => {
         e.preventDefault()
-        props.add_board(paper)
-        history.push("/admin/panel/add/mcqs")
+        if (paper.month === "" || paper.year === "") {
+            setNotificationStatus(true)
+        }else{
+            props.add_board(paper)
+            history.push("/admin/panel/add/")
+        }
+        
     }
 
     const change_input = (e) => {
@@ -32,7 +38,7 @@ function AdminAddBoardComponent(props) {
 
     const change_month_and_year = (date) => {
         setStartDate(date)
-        const monthNumber = date.getMonth();
+        const monthNumber = startDate.getMonth();
         const year = date.getFullYear();
         var month = "";
         switch(monthNumber.toString()){
@@ -75,14 +81,14 @@ function AdminAddBoardComponent(props) {
             default:
                 alert("please try again")
         }
-        setPaper({...paper, year: year, month: month})
+        setPaper({...paper, year: year.toString(), month: month})
     }
 
     return (
         <section className="add_board_main">
             <div className="add_board_child px-md-5 px-4">
-                <h1 className="text-center board_titile">Add Paper</h1>
-                <form className="board_form mx-auto mt-5" onSubmit={submit_data}>
+                <h1 className="text-center board_titile py-3">Add Paper</h1>
+                <form className="board_form mx-auto" onSubmit={submit_data}>
                     <div className="form-group">
                         <label htmlFor="">Enter System :</label>
                         <input type="text" autoFocus className="form-control" name="system" onChange={change_input} value={paper.system} required/>
@@ -108,10 +114,11 @@ function AdminAddBoardComponent(props) {
                         <input type="text" className="form-control" onChange={change_input} name="paper" value={paper.paper} required/>
                     </div>
                     <div className="form-group justify-content-center d-flex">
-                        <button type="submit" className="btn px-5 py-2 mybutton">Submit</button>
+                        <button type="submit" className="btn px-5 py-2 bg-info mybutton">Submit</button>
                     </div>
                 </form>
             </div>
+            <ModelNotification DialogStatus={notificationStatus} DialogTitle="Notification" DialogDesc="Please Select Year and month." handleClose={() => setNotificationStatus(false)} DialogOk="Ok" />
         </section>
     )
 }

@@ -1,60 +1,19 @@
-.Admin_Sidebar{
-    width: 220px;
-    height: 100vh;
-    background-color: #39435C;
-    position: fixed;
-    left: -220px;
-    top: 0;
-    z-index: 99;
-    transition: .3s ease-in-out;
-}
-.sidebar_ul{
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 219px;
-}
-.sidebar_ul li{
-    list-style-type: none;
-}
-.sidebar_ul li a{
-    padding: 7px 20px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    transition: .3s ease-in-out;
-    font-size: 14px;
-}
-.admin_panel_heading_li{
-    font-weight: bold;
+.admnh_login_main{
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #283744;
-    margin-bottom: 10px;
+    background: #F5F3F9;
 }
-.admin_panel_heading_li h4{
-    font-size: 24px !important;
-    padding: 10px 0;
-    color: #fff;
+.admin_login_form{
+    width: 40%;
+    padding-bottom: 10px;
+    background: white;
 }
-.sidebar_ul li a:hover{
-    border-left: 10px solid rgba(0, 0, 0, .5);
-    text-decoration: none;
-    background-color: #23B7E5;
+.AdminPasswordField, .AdminUserField{
+    background-color: transparent !important;
 }
-.sidebar_ul li a svg{
-    margin-right: 15px !important;
-    font-size: 20px;
-}
-.Admin_Sidebar svg.sidebar_open_icon{
-    position: absolute !important;
-    right: -25px;
-    font-size: 40px;
-    color: #39435C;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-}
-.open_sidebar{
-    left: 0;
+#filled-adornment-password , #standard-basic{
+    background-color: transparent !important; 
 }
