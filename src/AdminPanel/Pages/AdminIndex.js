@@ -11,6 +11,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button , TextField} from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
+import axios from 'axios'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -39,23 +40,18 @@ function AdminIndex(props) {
         setValues({ ...values, [prop]: e.target.value });
     };
 
-    // const handleClickShowPassword = () => {
-    //     setValues({ ...values, showPassword: !values.showPassword });
-    // };
 
-    // const handleMouseDownPassword = (e) => {
-    //     e.preventDefault();
-    // };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch("/superuser/login",{
+        axios({
             method: 'post',
+            url: '/superuser/login',
             headers: {
               'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
             },
             data: `username=${values.username}&useremail=${values.useremail}`,
-        })
+          })
           .then(res => {
               props.set_login(res.data.token);
               history.push("/admin/panel/papers")
@@ -63,7 +59,6 @@ function AdminIndex(props) {
           .catch(err => 
             setDialogStatus(true)
           )
-        
     }
 
 
