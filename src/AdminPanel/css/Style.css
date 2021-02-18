@@ -17,3 +17,11 @@
 #filled-adornment-password , #standard-basic{
     background-color: transparent !important; 
 }
+
+
+.onHoverBoldText:hover{
+    font-weight: bold !important;
+}
+.MuiPaper-elevation1{
+    box-shadow: none !important;
+}

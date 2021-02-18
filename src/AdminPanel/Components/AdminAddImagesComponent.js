@@ -36,12 +36,6 @@ const AdminAddImagesComponent = () => {
       console.log(files)
       $('.upload-icon').removeClass('hover_image_upload')
       $('.icon-text-box').css({ backgroundColor: '#fff' })
-      // const array = new Array(boardReducer[0]);
-      // mcqReducer.map((item, i) => {
-      //    array.push(item)
-      // })
-      // const jsonData = JSON.stringify(array);
-      // document.write(jsonData)
    }
    // on Drag Enter
    const handleDragEnter = (e) => {
@@ -111,10 +105,6 @@ const AdminAddImagesComponent = () => {
          <Backdrop className={classes.backdrop} open={open}>
             <LinearProgressWithLabel value={progress} />;
       </Backdrop>
-         {/* Full Width Progress bar */}
-         {/*<div style={{ width: '100%' }} className="Full_Page_Progress">
-               <LinearProgressWithLabel value={progress} />
-   </div>*/}
       </div>
    );
 }

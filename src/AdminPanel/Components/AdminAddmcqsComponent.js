@@ -12,8 +12,8 @@ import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios'
 // Dialog Box
 import Slide from '@material-ui/core/Slide';
-import ModelNotification from './ModelNotification'
-import ConfirmDialog from './ConfirmDialog'
+import ModelNotification from '../../Modals/ModelNotification'
+import ConfirmDialog from '../../Modals/ConfirmDialog'
 import LinearProgressWithLabel from './LinearProgressBarWithLabel'
 import Backdrop from '@material-ui/core/Backdrop';
 import { makeStyles } from '@material-ui/core/styles';
@@ -297,7 +297,6 @@ function AdminAddmcqsComponent(props) {
         })
         .then(res => res.json())
         .then(res => {
-            console.log(res)
             props.resetState();
             props.resetBoard();
             setProgressBarStatus(false)

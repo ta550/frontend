@@ -11,8 +11,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button , TextField} from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
-import axios from 'axios'
-
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -51,14 +49,13 @@ function AdminIndex(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios({
+        fetch("/superuser/login",{
             method: 'post',
-            url: '/superuser/login',
             headers: {
               'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
             },
             data: `username=${values.username}&useremail=${values.useremail}`,
-          })
+        })
           .then(res => {
               props.set_login(res.data.token);
               history.push("/admin/panel/papers")

@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux'
 import { FcEditImage, FcDeleteDatabase } from "react-icons/fc";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import ConfirmDialog from "../Components/ConfirmDialog";
+import ConfirmDialog from "../../Modals/ConfirmDialog";
 import $ from 'jquery'
 
 

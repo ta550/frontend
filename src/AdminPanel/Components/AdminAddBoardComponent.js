@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import {useHistory} from 'react-router-dom'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import ModelNotification from './ModelNotification'
+import ModelNotification from '../../Modals/ModelNotification'
 
 function AdminAddBoardComponent(props) {
     const history = useHistory();
@@ -38,7 +38,7 @@ function AdminAddBoardComponent(props) {
 
     const change_month_and_year = (date) => {
         setStartDate(date)
-        const monthNumber = startDate.getMonth();
+        const monthNumber = date.getMonth();
         const year = date.getFullYear();
         var month = "";
         switch(monthNumber.toString()){

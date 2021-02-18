@@ -14,6 +14,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function ConfirmDialog(props) {
     return (
         <Dialog
+            style={{ zIndex: '2' }}
             open={props.ConfirmDialog}
             TransitionComponent={Transition}
             keepMounted

@@ -21,11 +21,11 @@ function LinearProgressWithLabel(props) {
         heigth="100"
       >
         <Typography variant="caption" component="div" className="text-white">{`${Math.round(
-          props.value,
-        )}%`}</Typography>
+          props.value
+)}%`}</Typography>
       </Box>
     </Box>
-    );
+    )
   }
 
   export default LinearProgressWithLabel;
