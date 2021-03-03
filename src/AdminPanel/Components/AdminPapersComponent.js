@@ -169,7 +169,7 @@ export default function AdminPapersComponent() {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [id, setId] = React.useState([])
   const loginReducer = useSelector(state => state.loginReducer)
   const [getData, setGetData] = React.useState("")
@@ -192,10 +192,8 @@ export default function AdminPapersComponent() {
       .then(res => {
         if (res.message) {
           setRows([])
-          console.log(res)
           setSelected([])
-        } else {
-          console.log(res)
+        } else { 
           setProgressBarStatus('d-none')
           setRows(res)
         }
@@ -288,7 +286,7 @@ export default function AdminPapersComponent() {
         <EnhancedTableToolbar data={rows} progressBarStatus={progressBarStatus} id={id} selected={selected} callUseEffect={callUseEffect} />
         <TableContainer style={{ boxShadow: "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)" }}>
           <Table
-            className={`${classes.table} text-white`}
+            className={`${classes.table} mb-3 text-white`}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
@@ -347,7 +345,7 @@ export default function AdminPapersComponent() {
         </TableContainer>
         <TablePagination
           style={{ border: 'none' }}
-          rowsPerPageOptions={[5, 10, 15]}
+          rowsPerPageOptions={[5, 10, 15, 20, 25]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}

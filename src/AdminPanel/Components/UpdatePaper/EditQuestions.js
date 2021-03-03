@@ -20,6 +20,8 @@ import Backdrop from '@material-ui/core/Backdrop';
 import { makeStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { Fab } from '@material-ui/core'
+import S3 from 'react-aws-s3';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 
@@ -46,6 +48,10 @@ const useStyles2 = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     flex: 1,
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 const Transition2 = React.forwardRef(function Transition(props, ref) {
@@ -71,6 +77,9 @@ function EditQuestion(props) {
   const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
   const [ConfirmDialogStatus, setConfirmDialog] = React.useState(false);
   const [markdownFontSize, setMarkdownFontSize] = React.useState("14px");
+  const [images, setImages] = React.useState([])
+  const [deleteImagesNames, setDeleteImagesNames] = React.useState([])
+  const [config, setConfig] = React.useState([])
   // Dialog Hooks
   const [DialogStatus, setDialogStatus] = React.useState(false);
   const [DialogDesc, setDialogDesc] = React.useState("Are you Sure?");
@@ -80,12 +89,8 @@ function EditQuestion(props) {
   const classes = useStyles();
   const [progress, setProgress] = useState(10);
   // React Redux
-  const mcqReducer = useSelector(state => state.mcqReducer)
-  const boardReducer = useSelector(state => state.boardReducer)
   const loginReducer = useSelector(state => state.loginReducer)
-  const [getData, setGetData] = useState("")
-  // for navigation
-  const history = useHistory();
+  const [getData, setGetData] = useState(true)
 
 
   const RefreshData = () => {
@@ -115,10 +120,44 @@ function EditQuestion(props) {
     }, 100)
   }
 
+  React.useEffect(() => {
+    // GET S3 CREDANTIONS
+    fetch("/dashboard/de/question/s3credentials", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${loginReducer}`
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (!res.message) {
+          setConfig({
+            bucketName: "exam105",
+            region: res.region,
+            accessKeyId: res.accesskey,
+            secretAccessKey: res.secretkey
+          })
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      }
+      )
+
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => (prevProgress >= 90 ? 10 : prevProgress + 7));
+    }, 800);
+    return () => {
+      clearInterval(timer);
+    };
+  },[])
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Get Mcqs From API
   React.useEffect(() => {
     if (window.EditQuestionId !== undefined) {
+      setProgressBarStatus(true)
       fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
         method: 'GET',
         headers: {
@@ -132,7 +171,14 @@ function EditQuestion(props) {
             setQuestion(res.questions)
             setOptions(res.options)
             SelectedOptionsBackgroundChange(res.options)
+            setDeleteImagesNames([])
+            setProgressBarStatus(false)
             $('.marks').val(res.marks);
+            if (res.images === undefined) {
+              setImages([])
+            } else {
+              setImages(res.images)
+            }
             if (res.topics === undefined) {
               setTopics([])
             } else {
@@ -141,6 +187,7 @@ function EditQuestion(props) {
           }
         })
         .catch(err => console.log(err))
+
     }
   }, [window.EditQuestionId, getData])
   // on option created
@@ -219,7 +266,6 @@ function EditQuestion(props) {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Update Question
   const update_question = () => {
-    // /dashboard/de/question/:id
     if (window.EditQuestionId !== undefined) {
       // Validation
       const mark = $('.marks').val();
@@ -238,36 +284,137 @@ function EditQuestion(props) {
           }
         }
         if (status === 1) {
-          // Update Question
-          const data = {
-            "id": window.EditQuestionId,
-            "questions": question,
-            "marks": mark,
-            "options": options,
-            "topic": topics
+          setProgressBarStatus(true)
+          const ReactS3Client = new S3(config);
+          for (var i = 0; i < deleteImagesNames.length; i++) {
+            ReactS3Client.deleteFile(deleteImagesNames[i])
           }
 
-          fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              'Authorization': `Bearer ${loginReducer}`
-            },
-            body: JSON.stringify(data)
-          })
-            .then(res => res.json())
-            .then(res => {
-              props.getAllQuestions();
-              window.EditQuestionId = undefined
-              onClose(false)
-            })
-            .catch(err => console.log(err))
+          var imageLocations = [];
+          var loopComplete = false;
+          var files = images;
+
+          if (files.length !== 0) {
+            for (var i = 0; i < files.length; i++) {
+              if (i + 1 === files.length) {
+                loopComplete = true;
+              }
+              if (!files[i].imageurl) {
+                ReactS3Client
+                  .uploadFile(files[i], files[i].name)
+                  .then(res => {
+                    const imageURL = { "imageurl": res.location }
+                    imageLocations.push(imageURL)
+                  })
+                  .catch(err => {
+                    setDialogDesc("Some Went Wrong Please Try Again!")
+                    setDialogStatus(true)
+                    loopComplete = false;
+                    console.log(err)
+                  })
+              } else {
+                imageLocations.push(files[i])
+              }
+            }
+          } else {
+            loopComplete = true;
+          }
+
+          setTimeout(() => {
+            if (loopComplete === true) {
+              // Update Question
+              console.log(imageLocations)
+              const data = {
+                id: window.EditQuestionId,
+                questions: question,
+                marks: mark,
+                options: options,
+                topics: topics,
+                images: imageLocations
+              }
+
+
+              fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  'Authorization': `Bearer ${loginReducer}`
+                },
+                body: JSON.stringify(data)
+              })
+                .then(res => res.json())
+                .then(res => {
+                  props.getAllQuestions();
+                  window.EditQuestionId = undefined
+                  onClose(false)
+                  setProgressBarStatus(false)
+                })
+                .catch(err => console.log(err))
+            } else {
+              console.log(imageLocations)
+              setDialogDesc("Some Went Wrong Please Try Again")
+              setDialogStatus(true)
+            }
+
+          }, [1000])
+
+
+
+
         } else {
           setDialogDesc("Chose The correct Option")
           setDialogStatus(true)
         }
       }
     }
+  }
+
+
+  const deleteImage = (data) => {
+    for (var i = 0; i < images.length; i++) {
+      if (images[i].imageurl) {
+        if (images[i].imageurl === images[data].imageurl) {
+          const ReactS3Client = new S3(config);
+          const parts = images[data].imageurl.split('/');
+          const lastSegment = parts.pop() || parts.pop();
+          setDeleteImagesNames([...deleteImagesNames, lastSegment])
+          setImages(images.filter((item, index) => index !== data))
+          console.log(deleteImagesNames);
+        }
+      } else {
+        setImages(images.filter((item, index) => index !== data))
+      }
+    }
+  };
+
+  // On custom add images
+  const handleAddImage = (e) => {
+    e.preventDefault();
+    let files = e.target.files
+    var newFiles = []
+
+    var oldImageNames = []
+    for (var i = 0; i < images.length; i++) {
+      var lastSegment = "";
+      if (images[i].imageurl) {
+        var parts = images[i].imageurl.split('/');
+        lastSegment = parts.pop() || parts.pop();
+        oldImageNames.push(lastSegment)
+      } else {
+        oldImageNames.push(images[i].name)
+      }
+    }
+
+    for (var i = 0; i < files.length; i++) {
+      if (!oldImageNames.includes(files[i].name)) {
+        newFiles.push(files[i])
+      }
+    }
+
+    setImages([...images, ...newFiles]);
+
+    var filesInput = $('.upload_images_input_for_mcqs');
+    filesInput.replaceWith(filesInput.val(''));
   }
 
 
@@ -347,13 +494,38 @@ function EditQuestion(props) {
                     </div>
                   </div>
                 </form>
+                <div className="mt-4 bg-white py-4 px-3" style={{ borderRadius: '20px', boxShadow: '0px 0px 2px black' }}>
+                  <input
+                    accept="image/*"
+                    className={`upload_images_input_for_mcqs small`}
+                    id="raised-button-file"
+                    onChange={handleAddImage}
+                    multiple
+                    type="file"
+                  />
+                  <div className="row">
+                    {images.map((item, i) => {
+                      if (item.imageurl) {
+                        return <div className="position-relative d-flex align-items-center w-50">
+                          <img alt="Image Error" style={{ height: '80px', width: '100%' }} className="img-fluid p-2" src={item.imageurl} />
+                          <DeleteIcon onClick={() => deleteImage(i)} className="bg-dark text-white rounded cursor-pointer" style={{ position: 'absolute', top: '0', right: '0' }} />
+                        </div>
+                      }
+                      var url = URL.createObjectURL(item)
+                      return <div className="position-relative d-flex align-items-center w-50">
+                        <img alt="Image Error" style={{ height: '80px', width: '100%' }} className="img-fluid p-2" src={url} />
+                        <DeleteIcon onClick={() => deleteImage(i)} className="bg-dark text-white rounded cursor-pointer" style={{ position: 'absolute', top: '0', right: '0' }} />
+                      </div>
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
-              <Fab color="primary" style={{ position: "fixed", bottom: "30px", right: "50px" }} aria-label="add" onClick={RefreshData} >
+            <Fab color="primary" style={{ position: "fixed", bottom: "30px", right: "50px" }} aria-label="add" onClick={RefreshData} >
               <RefreshIcon />
             </Fab>
           </div>
-          
+
           <br />
           {/* Alerts */}
           <Snackbar open={openAlertDelete} autoHideDuration={5000} onClose={handleClose}>
@@ -369,7 +541,7 @@ function EditQuestion(props) {
           {/* Dialog Box */}
           <ModelNotification DialogStatus={DialogStatus} DialogTitle={DialogTitle} DialogDesc={DialogDesc} handleClose={handleClose} DialogOk={DialogOk} />
           {/* Progress Bar */}
-          <Backdrop className={classes.backdrop} open={ProgressBarStatus}>
+          <Backdrop className={classes2.backdrop} open={ProgressBarStatus}>
             <LinearProgressWithLabel value={progress} />
           </Backdrop>
         </section>

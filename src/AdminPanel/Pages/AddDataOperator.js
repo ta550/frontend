@@ -156,9 +156,18 @@ const DataOperatorUI = () => {
             })
             .then(res => res.json())
             .then(res => {
+                $('.updateButton').removeClass("d-flex")
+                $('.updateButton').addClass('d-none')
+                // Add Button Hide
+                $('.addButton').addClass("d-flex")
+                $('.addButton').removeClass("d-none")
                 setConfirmDialogStatus(false)
                 setSnackbarMessage("Operator Deleted Successful!")
                 setOpenSnakBar(true)
+                setData({
+                    username: "",
+                    email: ""
+                })
                 fetchData();
             })
             .catch((err) => console.log(err))
@@ -171,12 +180,12 @@ const DataOperatorUI = () => {
         <div className="container-fluid py-5" style={{ background: '#E5E5E5', minHeight: '100vh' }}>
             <div className="row">
                 <div className="col-md-4">
-                    <form onSubmit={handleSubmit} className="py-4 rounded bg-white">
+                    <form className="py-4 rounded bg-white">
                         <h2 className="text-center">Add Operator</h2><br />
                         <TextField type="text" value={data.username} onChange={(e) => handleChange(e, "username")} id="standard-basic" label="User Name" className="mx-auto d-flex" style={{ width: '80%' }} required /><br />
                         <TextField type="email" value={data.email} onChange={(e) => handleChange(e, "email")} id="standard-basic" label="User Email" className="mx-auto d-flex" style={{ width: '80%' }} required />
-                        <Button type="submit" variant="contained" color="primary" className="mx-auto addButton d-flex mt-5">Add</Button>
-                        <Button variant="contained" color="primary" onClick={updateOperator} className="d-none updateButton mx-auto mt-5">Update</Button>
+                        <Button type="button" variant="contained" color="primary" onClick={updateOperator} className="d-none updateButton mx-auto mt-5">Update</Button>
+                        <Button type="button" variant="contained" color="primary" onClick={handleSubmit} className="mx-auto addButton d-flex mt-5">Add</Button>
                     </form>
                 </div>
                 <div className="col-md-8">

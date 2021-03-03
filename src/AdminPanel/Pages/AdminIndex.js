@@ -44,6 +44,7 @@ function AdminIndex(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
         axios({
             method: 'post',
             url: '/superuser/login',

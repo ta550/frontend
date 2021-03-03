@@ -10,6 +10,9 @@ import { useSelector } from 'react-redux'
 import { MathpixLoader, MathpixMarkdown } from "mathpix-markdown-it";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
+import S3 from 'react-aws-s3';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ImagesCarouselModal from '../../../Modals/ImagesCarouselModal';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -22,6 +25,20 @@ export default function SeeQuestion(props) {
   const [question, setQuestion] = React.useState("");
   const [options, setOptions] = React.useState([]);
   const [topics, setTopics] = React.useState([])
+  const [images, setImages] = React.useState([
+    {
+      imageurl: '',
+    }
+  ])
+  const [imageViewStatus, setImageViewStatus] = React.useState(false)
+
+
+  const ImageViewClose = () => {
+    setImageViewStatus(false)
+  }
+
+
+
 
   React.useEffect(() => {
     if (window.SeeQuestionId !== undefined) {
@@ -37,6 +54,12 @@ export default function SeeQuestion(props) {
           setQuestion(res.questions)
           setOptions(res.options)
           console.log(res.topics)
+          if (res.images) {
+            setImages(res.images)
+            console.log(res.images)
+          } else {
+            setImages([])
+          }
           if (res.topics) {
             setTopics(res.topics)
           } else {
@@ -49,8 +72,10 @@ export default function SeeQuestion(props) {
     } else {
       handleClose();
     }
-    console.log('windowid is :' + window.SeeQuestionId)
   }, [window.SeeQuestionId])
+
+
+
 
   return (
     <div>
@@ -66,16 +91,16 @@ export default function SeeQuestion(props) {
       >
 
         <DialogContent>
-          <DialogTitle id="alert-dialog-slide-title">
+          <div style={{ fontSize: "13px" }}>
             <MathpixLoader>
               <MathpixMarkdown text={question} />
             </MathpixLoader>
-          </DialogTitle>
+          </div>
           <hr />
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-6">
-                <h3 className="py-3">Options</h3>
+                <h3 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">Options</h3>
                 <div>
                   {options.map((item, i) => (
                     <div className="pt-3 d-flex" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)" }}>
@@ -86,17 +111,49 @@ export default function SeeQuestion(props) {
                 </div>
               </div>
               <div className="col-md-6">
-                {(topics !== "")}
-                <h3 className="py-3">Topics</h3>
+                <h3 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">Topics</h3>
                 <div>
-                  {topics.map((item, i) => (
-                    <>
-                      <p>{item.topic}</p>
-                      <hr />
-                    </>
-                  ))}
+                  {
+                    (topics.length === 0 ? (
+                      <h4 className="text-center">This question does not have any topic</h4>
+                    ) : (
+                        topics.map((item, i) => (
+                          <div className="pt-3 d-flex" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)" }}>
+                            <p> &nbsp;{item.topic}</p>
+                          </div>
+                        ))
+                      )
+                    )
+                  }
                 </div>
               </div>
+            </div>
+            <br />
+            <div className="row">
+              <h3 className="col-12 simple-header-font font-italic font-weight-bold shadow text-center py-3">Related Images ({images.length})</h3>
+              {
+                (images.length === 0 ? (
+                  <div className="col-12">
+                    <h4 className="text-center">This question does not have images</h4>
+                  </div>
+                ) : (
+                    images.map((item, i) => {
+                      if (item.imageurl) {
+                        return <div className="position-relative p-2 d-flex align-items-center col-2" style={{ cursor: 'pointer' }} onClick={() => { window.activeImageinImageCarousel = i; setImageViewStatus(true) }}>
+                          <img alt="Image Error" style={{ height: '120px', width: '100%' }} className="img-fluid px-1" src={item.imageurl} />
+                        </div>
+                      }
+                    })
+                  ))
+              }
+              {/* Images View Carousel Dialog */}
+              {
+                (images.lenght === 0) ? (
+                  <div></div>
+                ) : (
+                    <ImagesCarouselModal open={imageViewStatus} handleClose={ImageViewClose} data={images} />
+                  )
+              }
             </div>
           </div>
         </DialogContent>

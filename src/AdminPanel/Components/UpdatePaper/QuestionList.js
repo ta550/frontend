@@ -144,8 +144,7 @@ function QuestionList(props) {
                   <div className="container-fluid">
                     <div className="row">
                       <div className="col-10">
-                        <TableCell className="font-weight-bolder">{index + 1})</TableCell>
-                        <TableCell className="onHoverBoldText" onClick={() => { window.SeeQuestionId = row.id; setOpenSeeDialog(true) }} style={{ cursor: 'pointer' }}>{(row.questions.length >= 100) ? row.questions.slice(0, 100)+'...' : row.questions }</TableCell>
+                        <TableCell className="onHoverBoldText" onClick={() => { window.SeeQuestionId = row.id; setOpenSeeDialog(true) }} style={{ cursor: 'pointer' }}>{(row.questions.length >= 130) ? row.questions.slice(0, 130)+'...' : row.questions }</TableCell>
                       </div>
                       <div className="col-2">
                         <div className="d-flex">

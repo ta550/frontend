@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
 .admnh_login_main{
     width: 100%;
     min-height: 100vh;
@@ -18,10 +19,27 @@
     background-color: transparent !important; 
 }
 
-
 .onHoverBoldText:hover{
     font-weight: bold !important;
 }
 .MuiPaper-elevation1{
     box-shadow: none !important;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.MuiCircularProgress-root{
+    width: 100px !important;
+    height: 100px !important;
+}
+.onHoverZoomImage{
+    transition: transform .2s; /* Animation */
+    z-index: 99;
+
+}
+.onHoverZoomImage:hover{
+    transform: scale(1.5) !important;
+}
+.simple-header-font{
+    font-family: 'Roboto Slab', serif;
 }

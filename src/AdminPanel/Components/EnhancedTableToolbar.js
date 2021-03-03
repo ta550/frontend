@@ -66,6 +66,9 @@ const EnhancedTableToolbar = (props) => {
 
 
   const deletePapers = () => {
+    if (id.lenght > 0) {
+      console.log(id)
+    }
     fetch(`/dashboard/de/metadata/${id}`, {
       method: 'DELETE',
       headers: {
@@ -105,6 +108,7 @@ const EnhancedTableToolbar = (props) => {
 
       {numSelected > 0 ? (
         <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+          <div className={`spinner-border mr-3 ${props.progressBarStatus}`} role="status"></div>
           {numSelected} selected
         </Typography>
       ) : (
