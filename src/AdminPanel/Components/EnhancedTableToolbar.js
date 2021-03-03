@@ -65,24 +65,24 @@ const EnhancedTableToolbar = (props) => {
   };
 
 
-  const deletePapers = () => {
-    if (id.lenght > 0) {
-      console.log(id)
+  const deletePapers = async () => {
+    if (id) {
+      id.map((item,i) => {
+        fetch(`/dashboard/de/metadata/${item}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${loginReducer}`
+          }
+        })
+          .then(res => res.json())
+          .then(res => {
+            setConfirmDialogStatus(false)
+            callUseEffect();
+          })
+          .catch(err => console.log(err))
+      })  
     }
-    fetch(`/dashboard/de/metadata/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${loginReducer}`
-      }
-    })
-      .then(res => res.json())
-      .then(res => {
-        console.log(res)
-        setConfirmDialogStatus(false)
-        callUseEffect();
-      })
-      .catch(err => console.log(err))
   }
 
   const onHideQuestionList = () => {

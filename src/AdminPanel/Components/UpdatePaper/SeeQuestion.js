@@ -134,7 +134,7 @@ export default function SeeQuestion(props) {
               {
                 (images.length === 0 ? (
                   <div className="col-12">
-                    <h4 className="text-center">This question does not have images</h4>
+                    <h4 className="text-center">This question does not have any image</h4>
                   </div>
                 ) : (
                     images.map((item, i) => {

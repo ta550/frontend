@@ -190,6 +190,8 @@ export default function AdminPapersComponent() {
     })
       .then(res => res.json())
       .then(res => {
+          setRows([])
+          setSelected([])
         if (res.message) {
           setRows([])
           setSelected([])
