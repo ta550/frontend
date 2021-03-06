@@ -60,7 +60,7 @@ const Transition2 = React.forwardRef(function Transition(props, ref) {
 
 function EditQuestion(props) {
   const classes2 = useStyles2();
-  const { open, onClose } = props
+  const { open, metadata, onClose } = props
 
   const handleCloseDialogBox = () => {
     onClose(false)
@@ -94,6 +94,7 @@ function EditQuestion(props) {
 
 
   const RefreshData = () => {
+    console.log(config)
     if (getData === true) {
       setGetData(false)
     } else {
@@ -135,6 +136,7 @@ function EditQuestion(props) {
           setConfig({
             bucketName: "exam105",
             region: res.region,
+            dirName: metadata.subject,
             accessKeyId: res.accesskey,
             secretAccessKey: res.secretkey
           })
@@ -151,7 +153,7 @@ function EditQuestion(props) {
     return () => {
       clearInterval(timer);
     };
-  },[])
+  }, [])
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Get Mcqs From API
@@ -307,10 +309,11 @@ function EditQuestion(props) {
                     imageLocations.push(imageURL)
                   })
                   .catch(err => {
+                    setProgressBarStatus(false)
+                    RefreshData();
                     setDialogDesc("Some Went Wrong Please Try Again!")
                     setDialogStatus(true)
                     loopComplete = false;
-                    console.log(err)
                   })
               } else {
                 imageLocations.push(files[i])
@@ -323,7 +326,6 @@ function EditQuestion(props) {
           setTimeout(() => {
             if (loopComplete === true) {
               // Update Question
-              console.log(imageLocations)
               const data = {
                 id: window.EditQuestionId,
                 questions: question,
@@ -333,30 +335,29 @@ function EditQuestion(props) {
                 images: imageLocations
               }
 
-
-              fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  'Authorization': `Bearer ${loginReducer}`
-                },
-                body: JSON.stringify(data)
-              })
-                .then(res => res.json())
-                .then(res => {
-                  props.getAllQuestions();
-                  window.EditQuestionId = undefined
-                  onClose(false)
-                  setProgressBarStatus(false)
+              if (!DialogStatus) {
+                fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${loginReducer}`
+                  },
+                  body: JSON.stringify(data)
                 })
-                .catch(err => console.log(err))
-            } else {
-              console.log(imageLocations)
-              setDialogDesc("Some Went Wrong Please Try Again")
-              setDialogStatus(true)
+                  .then(res => res.json())
+                  .then(res => {
+                    props.getAllQuestions();
+                    window.EditQuestionId = undefined
+                    onClose(false)
+                    setProgressBarStatus(false)
+                  })
+                  .catch(err => console.log(err))
+              } else {
+                setDialogDesc("Some Went Wrong Please Try Again")
+                setDialogStatus(true)
+              }
             }
-
-          }, [1000])
+          }, [1500])
 
 
 
@@ -379,7 +380,6 @@ function EditQuestion(props) {
           const lastSegment = parts.pop() || parts.pop();
           setDeleteImagesNames([...deleteImagesNames, lastSegment])
           setImages(images.filter((item, index) => index !== data))
-          console.log(deleteImagesNames);
         }
       } else {
         setImages(images.filter((item, index) => index !== data))
@@ -506,13 +506,13 @@ function EditQuestion(props) {
                   <div className="row">
                     {images.map((item, i) => {
                       if (item.imageurl) {
-                        return <div className="position-relative d-flex align-items-center w-50">
+                        return <div key={i} className="position-relative d-flex align-items-center w-50">
                           <img alt="Image Error" style={{ height: '80px', width: '100%' }} className="img-fluid p-2" src={item.imageurl} />
                           <DeleteIcon onClick={() => deleteImage(i)} className="bg-dark text-white rounded cursor-pointer" style={{ position: 'absolute', top: '0', right: '0' }} />
                         </div>
                       }
                       var url = URL.createObjectURL(item)
-                      return <div className="position-relative d-flex align-items-center w-50">
+                      return <div key={i} className="position-relative d-flex align-items-center w-50">
                         <img alt="Image Error" style={{ height: '80px', width: '100%' }} className="img-fluid p-2" src={url} />
                         <DeleteIcon onClick={() => deleteImage(i)} className="bg-dark text-white rounded cursor-pointer" style={{ position: 'absolute', top: '0', right: '0' }} />
                       </div>
@@ -521,11 +521,11 @@ function EditQuestion(props) {
                 </div>
               </div>
             </div>
+            
             <Fab color="primary" style={{ position: "fixed", bottom: "30px", right: "50px" }} aria-label="add" onClick={RefreshData} >
               <RefreshIcon />
             </Fab>
           </div>
-
           <br />
           {/* Alerts */}
           <Snackbar open={openAlertDelete} autoHideDuration={5000} onClose={handleClose}>

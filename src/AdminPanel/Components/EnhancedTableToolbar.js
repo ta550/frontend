@@ -86,7 +86,15 @@ const EnhancedTableToolbar = (props) => {
   }
 
   const onHideQuestionList = () => {
-    setEditQuestion(false)
+    console.log(id)
+    if (id.length >= 0) {
+      data.map((item, i) => {
+        if (item.id === id[0]) {
+          setSingleIdMetaData(item)
+        }
+      })
+      setEditQuestion(false)
+    }
   }
 
   return (
@@ -97,7 +105,7 @@ const EnhancedTableToolbar = (props) => {
     >
 
       {/* Edit Papers */}
-      <QuestionList open={editQuestion} id={id} onClose={onHideQuestionList} />
+      <QuestionList open={editQuestion} metadata={singleIdMetaData} id={id} onClose={onHideQuestionList} />
 
       {/* Modal Dialog MetaData */}
       <DialogModalMetaData callUseEffect={callUseEffect} data={singleIdMetaData} DialogStatus={dialogMetaData} id={id} handleClose={() => setDialogMetaData(false)} />

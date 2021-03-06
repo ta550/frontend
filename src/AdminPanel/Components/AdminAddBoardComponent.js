@@ -1,17 +1,21 @@
 import React, { useState } from 'react'
 import '../css/AdminAddmcqs.css'
-import { add_board } from '../../action/index'
+import { add_board, reset_mcq } from '../../action/index'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ModelNotification from '../../Modals/ModelNotification'
-import { ListSubheader, MenuItem, Select } from '@material-ui/core'
+import ConfirmDialog from '../../Modals/ConfirmDialog'
+import { MenuItem, Select } from '@material-ui/core'
+import { useSelector } from 'react-redux'
 
 function AdminAddBoardComponent(props) {
     const history = useHistory();
+    const mcqReducer = useSelector((data) => data.mcqReducer)
     const [startDate, setStartDate] = useState(new Date());
     const [notificationStatus, setNotificationStatus] = useState(false)
+    const [confirmDialogStatus, setConfirmDialogStatus] = useState(false)
     const [systems, setSystems] = useState([
         { system: "GCSE" },
         { system: "IGCSE" },
@@ -30,15 +34,18 @@ function AdminAddBoardComponent(props) {
     ])
 
     const [series, setSeries] = useState([
-        { series: "series 1" },
-        { series: "series 2" },
-        { series: "series 3" },
+        { series: "1" },
+        { series: "2" },
+        { series: "3" },
+        { series: "4" },
+        { series: "5" },
+        { series: "6" },
     ])
 
     const [papers, setPapers] = useState([
-        { paper: "paper 1" },
-        { paper: "paper 2" },
-        { paper: "paper 3" },
+        { paper: "Paper 1" },
+        { paper: "Paper 2" },
+        { paper: "Paper 3" },
     ])
 
     const [paper, setPaper] = useState({
@@ -51,12 +58,24 @@ function AdminAddBoardComponent(props) {
         paper: ''
     });
 
+
+    React.useEffect(() => {
+        if (mcqReducer.length !== 0) {
+            setConfirmDialogStatus(true)
+        }
+    }, [])
+
+
+
+
+
     const submit_data = (e) => {
         e.preventDefault()
         if (paper.month === "" || paper.year === "") {
             setNotificationStatus(true)
         } else {
             props.add_board(paper)
+            props.reset_mcq();
             history.push("/admin/panel/add/")
         }
 
@@ -165,87 +184,86 @@ function AdminAddBoardComponent(props) {
         setPaper({ ...paper, year: year.toString(), month: month })
     }
 
-    return (
-        <section className="add_board_main">
-            <div className="add_board_child px-md-5 px-4">
-                <h1 className="text-center board_titile py-3">Paper Meta Data</h1>
-                <form className="board_form mx-auto" onSubmit={submit_data}>
-                    <div className="form-group">
-                        <label htmlFor="">Select System :</label>
-                        <Select defaultValue="" name="system" onChange={change_input} id="grouped-select" className="form-control" required>
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            {systems.map((item, i) => {
-                                return (
-                                    <MenuItem value={item.system}>{item.system}</MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="">Select Board :</label>
-                        <Select defaultValue="" name="board" onChange={change_input} id="grouped-select" className="form-control" required>
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            {boards.map((item, i) => {
-                                return (
-                                    <MenuItem value={item.board}>{item.board}</MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="">Select Subject :</label>
-                        <Select defaultValue="" name="subject" onChange={change_input} id="grouped-select" className="form-control" required>
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            {subjects.map((item, i) => {
-                                return (
-                                    <MenuItem value={item.subject}>{item.subject}</MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </div>
-                    <div className="form-group datepicker_main">
-                        <label htmlFor="">Select Year And Month :</label><br />
-                        <DatePicker className="form-control w-100" selected={startDate} showMonthYearPicker peekNextMonth onChangeRaw={e => e.preventDefault()} onFocus={e => e.preventDefault()} onKeyDown={e => e.preventDefault()} disabledKeyboardNavigation dateFormat="MMMM yyyy" onChange={change_month_and_year} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="">Select Series :</label>
-                        <Select defaultValue="" name="series" onChange={change_input} id="grouped-select" className="form-control" required>
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            {series.map((item, i) => {
-                                return (
-                                    <MenuItem value={item.series}>{item.series}</MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="">Select Paper:</label>
-                        <Select defaultValue="" name="paper" onChange={change_input} id="grouped-select" className="form-control" required>
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            {papers.map((item, i) => {
-                                return (
-                                    <MenuItem value={item.paper}>{item.paper}</MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </div>
-                    <div className="form-group justify-content-center d-flex">
-                        <button type="submit" className="btn px-5 py-2 bg-info mybutton">Submit</button>
-                    </div>
-                </form>
-            </div>
-            <ModelNotification DialogStatus={notificationStatus} DialogTitle="Notification" DialogDesc="Please Select Year and month." handleClose={() => setNotificationStatus(false)} DialogOk="Ok" />
-        </section>
+    return (<section className="add_board_main" >
+        <div className="add_board_child px-md-5 px-4" >
+            <h1 className="text-center board_titile py-3" > Paper Meta Data </h1>
+            <form className="board_form mx-auto" onSubmit={submit_data} id="myForm">
+                <div className="form-group">
+                    <label htmlFor="system">Select System : </label>
+                    <select value={paper.system} id="system" name="system" onChange={change_input} id="grouped-select" className="form-control form-select" required>
+                        <option>
+                            None
+                                </option>
+                        {systems.map((item, i) => {
+                            return (
+                                <option value={item.system}>{item.system}</option>
+                            )
+                        })}
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">Select Board : </label>
+                    <select value={paper.board} name="board" onChange={change_input} id="grouped-select" className="form-control form-select" required>
+                        <option value="">
+                            None
+                                </option>
+                        {boards.map((item, i) => {
+                            return (
+                                <option value={item.board}>{item.board}</option>
+                            )
+                        })}
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">Select Subject :</label>
+                    <select value={paper.subject} name="subject" onChange={change_input} id="grouped-select" className="form-control form-select" required>
+                        <option value="">
+                            None
+                                </option>
+                        {subjects.map((item, i) => {
+                            return (
+                                <option value={item.subject}>{item.subject}</option>
+                            )
+                        })}
+                    </select>
+                </div>
+                <div className="form-group datepicker_main">
+                    <label htmlFor="">Select Year And Month :</label><br />
+                    <DatePicker className="form-control w-100" selected={startDate} showMonthYearPicker peekNextMonth onChangeRaw={e => e.preventDefault()} onFocus={e => e.preventDefault()} onKeyDown={e => e.preventDefault()} disabledKeyboardNavigation dateFormat="MMMM yyyy" onChange={change_month_and_year} />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">Select Series : </label>
+                    <select value={paper.series} name="series" onChange={change_input} id="grouped-select" className="form-control form-select" required>
+                        <option value="">
+                            None
+                                </option>
+                        {series.map((item, i) => {
+                            return (
+                                <option value={item.series}>{item.series}</option>
+                            )
+                        })}
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="">Select Paper :</label>
+                    <select value={paper.paper} name="paper" onChange={change_input} id="grouped-select" className="form-control form-select" required>
+                        <option value="">
+                            None
+                                </option>
+                        {papers.map((item, i) => {
+                            return (
+                                <option value={item.paper}>{item.paper}</option>
+                            )
+                        })}
+                    </select>
+                </div>
+                <div className="form-group justify-content-center d-flex">
+                    <button type="submit" className="btn px-5 py-2 bg-info mybutton">Submit</button>
+                </div>
+            </form>
+        </div>
+        <ModelNotification DialogStatus={notificationStatus} DialogTitle="Notification" DialogDesc="Please Select Year and month." handleClose={() => setNotificationStatus(false)} DialogOk="Ok" /> { /* Modal For Confirmation */} { /* Confirm Modal Dialog Status */}
+        <ConfirmDialog okButton="continue" delete_mcq_by_id={() => history.push("/admin/panel/add/mcqs")} ConfirmDialog={confirmDialogStatus} ConfirmDesc="Your Paper Already in Progress.Are you sure you want to continue with last Paper? if you add another data old data will be deleted." handleClose={() => setConfirmDialogStatus(false)} /> </section>
     )
 }
 
@@ -254,6 +272,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         add_board: (data) => {
             dispatch(add_board(data))
+        },
+        reset_mcq: () => {
+            dispatch(reset_mcq())
         }
     }
 }

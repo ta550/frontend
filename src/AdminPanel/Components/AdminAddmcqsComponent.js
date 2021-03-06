@@ -80,7 +80,7 @@ function AdminAddmcqsComponent(props) {
                 if (!res.message) {
                     setConfig({
                         bucketName: "exam105",
-                        dirName: boardReducer[0].subject.toLowerCase(),
+                        dirName: boardReducer[0].subject,
                         region: res.region,
                         accessKeyId: res.accesskey,
                         secretAccessKey: res.secretkey
@@ -205,7 +205,8 @@ function AdminAddmcqsComponent(props) {
                                 imageLocations.push(imageURL)
                             })
                             .catch(err => {
-                                setDialogDesc("Some Went Wrong Please Try Again!")
+                                loopComplete = false;
+                                setDialogDesc("Images Added Failed. Please Try Again!")
                                 setDialogStatus(true)
                                 console.log(err)
                             })
@@ -294,6 +295,8 @@ function AdminAddmcqsComponent(props) {
                                     })
                                     .catch(err => {
                                         loopComplete = false;
+                                        setDialogDesc("Images Added Failed. Please Try Again!")
+                                        setDialogStatus(true)
                                         console.log(err)
                                     })
                             } else {

@@ -44,7 +44,7 @@ const Transition2 = React.forwardRef(function Transition(props, ref) {
 
 function QuestionList(props) {
   const classes = useStyles();
-  const { open, onClose, id } = props
+  const { open,metadata, onClose, id } = props
   const [rows, setRows] = React.useState([]);
   const loginReducer = useSelector(state => state.loginReducer)
   const [openSeeDialog, setOpenSeeDialog] = React.useState(false);
@@ -53,7 +53,7 @@ function QuestionList(props) {
   const [editQuestionsStatus, setEditQuestionsStatus] = React.useState(false);
   const [progressBarStatus, setProgressBarStatus] = React.useState("")
   const [openAddQuestion, setOpenAddQuestion] = React.useState(false);
-  
+
 
   const getAllQuestions = () => {
     if (getQuestions === false) {
@@ -68,6 +68,9 @@ function QuestionList(props) {
   };
 
   React.useEffect(() => {
+    if (metadata === undefined) {
+      handleCloseDialogBox();
+    }
     setRows([])
     setProgressBarStatus("")
     if (id.length === 1) {
@@ -84,7 +87,7 @@ function QuestionList(props) {
           setProgressBarStatus("d-none")
         })
         .catch(err => console.log(err))
-    }else {
+    } else {
       handleCloseDialogBox();
     }
   }, [id, getQuestions])
@@ -139,38 +142,49 @@ function QuestionList(props) {
         </div>
         <TableContainer component={Paper}>
           <Table className={`${classes.table}`} aria-label="simple table">
-              {rows.map((row, index) => (
-                <TableRow key={index} className="border">
-                  <div className="container-fluid">
-                    <div className="row">
-                      <div className="col-10">
-                        <TableCell className="onHoverBoldText" onClick={() => { window.SeeQuestionId = row.id; setOpenSeeDialog(true) }} style={{ cursor: 'pointer' }}>{(row.questions.length >= 130) ? row.questions.slice(0, 130)+'...' : row.questions }</TableCell>
-                      </div>
-                      <div className="col-2">
-                        <div className="d-flex">
-                          <IconButton aria-label="Delete Question" onClick={() => openConfirmDialog(row.id)}>
-                            <DeleteIcon />
-                          </IconButton>
-                          <IconButton aria-label="Edit Question" onClick={() => { window.EditQuestionId = row.id; setEditQuestionsStatus(true) }}>
-                            <MdModeEdit />
-                          </IconButton>
-                          <IconButton aria-label="See Question" onClick={() => { window.SeeQuestionId = row.id; setOpenSeeDialog(true) }}>
-                            <BsFillEyeFill />
-                          </IconButton>
-                        </div>
+            {rows.map((row, index) => {
+              var bg;
+              if (index % 2 === 0) {
+                bg = '#F6F6F6';
+              }else {
+                bg = 'white'
+              }
+              return (
+              <TableBody key={index} className="p-0 border" style={{ background: bg }}>
+                <div className="container-fluid">
+                  <div className="row">
+                    <div className="col-10 p-0 d-flex align-items-center">
+                      {/* <TableCell className="onHoverBoldText" onClick={() => { window.SeeQuestionId = row.id; setOpenSeeDialog(true) }} style={{ cursor: 'pointer' }}>{(row.questions.length >= 130) ? row.questions.slice(0, 130)+'...' : row.questions }</TableCell> */}
+                      <p className="seeSomeText onHoverBoldText px-3" onClick={() => { window.SeeQuestionId = row.id; setOpenSeeDialog(true) }}>
+                        {row.questions}
+                      </p>
+                    </div>
+                    <div className="col-2">
+                      <div className="d-flex">
+                        <IconButton aria-label="Delete Question" onClick={() => openConfirmDialog(row.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton aria-label="Edit Question" onClick={() => { window.EditQuestionId = row.id; setEditQuestionsStatus(true) }}>
+                          <MdModeEdit />
+                        </IconButton>
+                        <IconButton aria-label="See Question" onClick={() => { window.SeeQuestionId = row.id; setOpenSeeDialog(true) }}>
+                          <BsFillEyeFill />
+                        </IconButton>
                       </div>
                     </div>
                   </div>
-                </TableRow>
-              ))}
-            <Fab color="primary" style={{ position: "fixed", bottom: "100px", right:"50px" }} aria-label="refresh" onClick={getAllQuestions}>
+                </div>
+              </TableBody>
+              );
+            })}
+            <Fab color="primary" style={{ position: "fixed", bottom: "100px", right: "50px" }} aria-label="refresh" onClick={getAllQuestions}>
               <RefreshIcon />
             </Fab>
-            <Fab color="primary" style={{ position: "fixed", bottom: "30px", right:"50px" }} aria-label="add" onClick={() => setOpenAddQuestion(true)}>
+            <Fab color="primary" style={{ position: "fixed", bottom: "30px", right: "50px" }} aria-label="add" onClick={() => setOpenAddQuestion(true)}>
               <AddIcon />
             </Fab>
             {/* Add Question Dialog */}
-            <AddQuestion getAllQuestions={getAllQuestions} id={id} open={openAddQuestion}  handleClose={() => setOpenAddQuestion(false)} />
+            <AddQuestion getAllQuestions={getAllQuestions} id={id} open={openAddQuestion} handleClose={() => setOpenAddQuestion(false)} />
           </Table>
           <br /><br /><br /><br /><br /><br /><br /><br />
         </TableContainer>
@@ -180,7 +194,7 @@ function QuestionList(props) {
       <ConfirmDialog delete_mcq_by_id={deleteQuestion} ConfirmDialog={confirmDialogStatus} ConfirmDesc="Are you sure you want to delete this Question?" handleClose={() => setConfirmDialogStatus(false)} />
 
       {/* Edit Questions Modal Dialog */}
-      <EditQuestions open={editQuestionsStatus} getAllQuestions={getAllQuestions} onClose={() => setEditQuestionsStatus(false)} />
+      <EditQuestions metadata={metadata} open={editQuestionsStatus} getAllQuestions={getAllQuestions} onClose={() => setEditQuestionsStatus(false)} />
       {/* See Quesion Modal Dialog */}
       <SeeQuestion open={openSeeDialog} handleClose={() => setOpenSeeDialog(false)} />
     </div>

@@ -42,7 +42,6 @@ function AdminSideBar(props) {
                 <li className="admin_panel_heading_li"><h4 exact to="/admin/panel/">Admin Panel</h4></li>
                 <li><NavLink exact to="/admin/panel/papers"><FcTodoList /> Papers List</NavLink></li>
                 <li><NavLink exact to="/admin/panel/add/papers"><FcPlus /> Add Paper</NavLink></li>
-                <li><NavLink exact to="/admin/panel/add/"><FcPlus /> Add Questions</NavLink></li>
                 <li onClick={logout}><NavLink to="#"><FcDeleteDatabase /> Logout</NavLink></li>
             </ul>
             <BsFillCaretRightFill className="sidebar_open_icon" onClick={sidebar_open} />
