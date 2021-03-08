@@ -338,8 +338,10 @@ function AddQuestion(props) {
                                         <div className="row">
                                             <div className="col-12 mx-auto mt-4">
                                                 <div className="all_mcq_operations_button d-flex mx-auto justify-content-center w-100 ">
-                                                    <div>
-                                                        <button type="button" onClick={add_mcq} className="bg-success mx-2 mt-2 btn mybutton">Add</button>
+                                                    <div onClick={add_mcq}>
+                                                        <button type="button" onClick={add_mcq} className="bg-success mx-2 mt-2 btn mybutton">
+                                                            <p onClick={add_mcq}>Add</p>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
