@@ -16,7 +16,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
-import ModelNotification from './ModelNotification'
+import ModelNotification from '../../Modals/ModelNotification'
 import LinearProgressWithLabel from './LinearProgressBarWithLabel'
 import Backdrop from '@material-ui/core/Backdrop';
 import { makeStyles } from '@material-ui/core/styles';
@@ -49,6 +49,7 @@ function AdminAddTheoryComponent(props) {
     const [AlertValue, setAlertValue] = useState(false);
     const [ConfirmDialog, setConfirmDialog] = useState(false);
     const [ProgressBarStatus , setProgressBarStatus] = useState(false)
+    const [markdownFontSize, setMarkdownFontSize] = React.useState("14px");
     // Dialog Hooks
     const [DialogStatus, setDialogStatus] = useState(false);
     const [DialogDesc, setDialogDesc] = useState("Are you Sure?");
@@ -247,15 +248,33 @@ function AdminAddTheoryComponent(props) {
                             <div className="form-group">
                                 <textarea className="form-control" placeholder="Enter Question" rows="5" value={question} onChange={questionChange} required></textarea>
                             </div>
-                            <button type="button" onClick={question_output_hide_show} className="btn btn-info btn-sm mybutton py-1 mb-2 px-2 d-flex ml-auto m-0">hide / show</button>
-                            <div className="p-2 form-group question_output bg-info text-white col-12" style={{ height: "160px", borderRadius: "5px", overflowY: 'scroll' }}>
+                            <div className="row">
+                                <select value={markdownFontSize} onChange={(e) => setMarkdownFontSize(e.target.value) } className="small ml-3" style={{height: '25px'}}>
+                                    <option value="12px">12px</option>
+                                    <option value="13px">13px</option>
+                                    <option value="14px">14px</option>
+                                    <option value="15px">15px</option>
+                                    <option value="16px">16px</option>
+                                </select>
+                                <button type="button" onClick={question_output_hide_show} className="btn mr-3 btn-sm btn-info mybutton mb-2 d-flex ml-auto">Hide / Show</button>
+                            </div>
+                            <div className="p-2 form-group question_output col-12" style={{ fontSize: markdownFontSize, borderRadius: "5px"}}>
                                 <MathpixLoader>
                                     <MathpixMarkdown text={question} />
                                 </MathpixLoader>
                             </div>
                             <textarea className="form-control" placeholder="Enter Answer" rows="5" value={answer} onChange={(e) => setAnswer(e.target.value)} required></textarea>
-                            <button type="button" onClick={answer_output_hide_show} className="btn btn-info btn-sm mybutton py-1 my-2 px-2 d-flex ml-auto m-0">hide / show</button>
-                            <div className="p-2 form-group answer_output bg-info text-white col-12" style={{ height: "160px", borderRadius: "5px", overflowY: 'scroll' }}>
+                            <div className="row mt-3">
+                                <select value={markdownFontSize} onChange={(e) => setMarkdownFontSize(e.target.value) } className="small ml-3" style={{height: '25px'}}>
+                                    <option value="12px">12px</option>
+                                    <option value="13px">13px</option>
+                                    <option value="14px">14px</option>
+                                    <option value="15px">15px</option>
+                                    <option value="16px">16px</option>
+                                </select>
+                                <button type="button" onClick={answer_output_hide_show} className="btn mr-3 btn-sm btn-info mybutton mb-2 d-flex ml-auto">Hide / Show</button>
+                            </div>
+                            <div className="p-2 form-group answer_output col-12" style={{ fontSize: markdownFontSize, borderRadius: "5px"}}>
                                 <MathpixLoader>
                                     <MathpixMarkdown text={answer} />
                                 </MathpixLoader>
@@ -270,7 +289,7 @@ function AdminAddTheoryComponent(props) {
                                             <button type="button" className="bg-success mx-2 mt-2 btn mybutton">Finish</button>
                                         </div>
                                         <div>
-                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="bg-info border mt-2 mybutton delete_theory_button btn">delete</button>
+                                            <button type="button" style={{ display: "none" }} onClick={() => setConfirmDialog(true)} className="mr-2 bg-info border mt-2 mybutton delete_theory_button btn">delete</button>
                                             <button type="button" style={{ display: "none" }} onClick={update_theory_question_by_id} className="border bg-info mt-2 mybutton update_theory_button btn mybutton">update</button>
                                             <Button variant="contained" onClick={add_theory_question} className="mybutton bg-info next_theory_button">Next</Button>
                                         </div>

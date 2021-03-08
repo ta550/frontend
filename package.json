@@ -2,7 +2,11 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+<<<<<<< HEAD
   "proxy": "http://18.140.51.127:9090/",
+=======
+  "proxy": "http://54.255.95.50:9090/",
+>>>>>>> exam105-55
   "dependencies": {
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
@@ -16,6 +20,7 @@
     "mathpix-markdown-it": "^1.0.38",
     "popper.js": "^1.12.9",
     "react": "^17.0.1",
+    "react-aws-s3": "^1.4.0",
     "react-bootstrap": "^1.4.0",
     "react-datepicker": "^3.3.0",
     "react-dom": "^17.0.1",
@@ -27,8 +32,8 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --max-old-space-size=1024 start",
+    "build": "react-scripts --max-old-space-size=1024 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -1,21 +1,26 @@
-import React, { useState } from 'react'
-import '../css/AdminAddmcqs.css'
-import { add_board, reset_mcq } from '../../action/index'
-import { connect } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import ModelNotification from '../../Modals/ModelNotification'
-import ConfirmDialog from '../../Modals/ConfirmDialog'
-import { MenuItem, Select } from '@material-ui/core'
+import React, { useState, useEffect } from 'react';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import Slide from '@material-ui/core/Slide';
 import { useSelector } from 'react-redux'
+import DatePicker from "react-datepicker";
+import ModelNotification from '../../../Modals/ModelNotification'
+import { MenuItem, Select } from '@material-ui/core'
+import $ from 'jquery'
 
-function AdminAddBoardComponent(props) {
-    const history = useHistory();
-    const mcqReducer = useSelector((data) => data.mcqReducer)
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+
+function DialogModalMetaData(props) {
+    const [open, setOpen] = React.useState(props.DialogStatus);
+    const loginReducer = useSelector(state => state.loginReducer)
+    const { callUseEffect } = props;
+
     const [startDate, setStartDate] = useState(new Date());
     const [notificationStatus, setNotificationStatus] = useState(false)
-    const [confirmDialogStatus, setConfirmDialogStatus] = useState(false)
     const [systems, setSystems] = useState([
         { system: "GCSE" },
         { system: "IGCSE" },
@@ -58,44 +63,42 @@ function AdminAddBoardComponent(props) {
         paper: ''
     });
 
-
-    React.useEffect(() => {
-        if (mcqReducer.length !== 0) {
-            setConfirmDialogStatus(true)
-        }
-    }, [])
-
-
-
-
-
     const submit_data = (e) => {
         e.preventDefault()
-        if (paper.month === "" || paper.year === "") {
-            setNotificationStatus(true)
-        } else {
-            props.add_board(paper)
-            props.reset_mcq();
-            history.push("/admin/panel/add/")
-        }
-
+        fetch(`/dashboard/de/metadata/${props.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${loginReducer}`
+            },
+            body: JSON.stringify(paper)
+        })
+            .then(res => res.json())
+            .then(res => {
+                props.handleClose();
+                callUseEffect();
+            })
+            .catch(err => console.log(err))
     }
 
+
     const change_input = (e) => {
-        if (e.target.name === "system") {
-            if (e.target.value === "GCSE") {
+        const name = e.target.name
+        const value = e.target.value
+        if (name === "system") {
+            if (value === "GCSE") {
                 setBoards([
                     { board: "Edexcel CGSE" },
                     { board: "AQA GCSE" },
                     { board: "OCR GCSE" },
                     { board: "CCEA GCSE" }
                 ])
-            } else if (e.target.value === "IGCSE") {
+            } else if (value === "IGCSE") {
                 setBoards([
                     { board: "Edexcel IGCSE" },
                     { board: "CIE IGCSE" },
                 ])
-            } else if (e.target.value === "AS") {
+            } else if (value === "AS") {
                 setBoards([
                     { board: "Edexcel AS" },
                     { board: "AQA AS" },
@@ -103,7 +106,7 @@ function AdminAddBoardComponent(props) {
                     { board: "CIE AS" },
                     { board: "Edexcel IAL" }
                 ])
-            } else if (e.target.value === "A Level") {
+            } else if (value === "A Level") {
                 setBoards([
                     { board: "Edexcel A Level" },
                     { board: "AQA A Level" },
@@ -111,7 +114,7 @@ function AdminAddBoardComponent(props) {
                     { board: "CIE A Level" },
                     { board: "Edexcel IAL" }
                 ])
-            } else if (e.target.value === "O Level") {
+            } else if (value === "O Level") {
                 setBoards([
                     { board: "Edexcel A Level" },
                     { board: "AQA A Level" },
@@ -119,22 +122,89 @@ function AdminAddBoardComponent(props) {
                     { board: "CIE A Level" },
                     { board: "Edexcel IAL" }
                 ])
-            } else if (e.target.value === "O Level") {
+            } else if (value === "O Level") {
                 setBoards([
                     { board: "CIE O Level" }
                 ])
-            } else if (e.target.value === "Pre U") {
+            } else if (value === "Pre U") {
                 setBoards([
                     { board: "CIE Pre U" }
                 ])
-            } else if (e.target.value === "IB") {
+            } else if (value === "IB") {
                 setBoards([
                     { board: "No Board", status: "disable" }
                 ])
+            } else {
+                setBoards([])
             }
         }
-        setPaper({ ...paper, [e.target.name]: e.target.value })
+        setPaper({ ...paper, [e.target.name]: value })
     }
+
+
+    React.useEffect(() => {
+        const e = {
+            target: { name: "system", value: props.data.system }
+        }
+        change_input(e)
+        setPaper({
+            system: props.data.system,
+            board: props.data.board,
+            subject: props.data.subject,
+            year: props.data.year,
+            month: props.data.month,
+            series: props.data.series,
+            paper: props.data.paper
+        })
+        setOpen(props.DialogStatus)
+        let year = props.data.year;
+        let month = props.data.month;
+        let monthNumber = "";
+        switch (month) {
+            case "January":
+                monthNumber = 0
+                break;
+            case "February":
+                monthNumber = 1;
+                break;
+            case "March":
+                monthNumber = 2;
+                break;
+            case "April":
+                monthNumber = 3;
+                break;
+            case "May":
+                monthNumber = 4;
+                break;
+            case "June":
+                monthNumber = 5;
+                break;
+            case "July":
+                monthNumber = 6;
+                break;
+            case "August":
+                monthNumber = 7;
+                break;
+            case "September":
+                monthNumber = 8;
+                break;
+            case "October":
+                monthNumber = 9;
+                break;
+            case "November":
+                monthNumber = 10;
+                break;
+            case "December":
+                monthNumber = 11;
+                break;
+            default:
+                monthNumber = 1
+                year = 2020
+        }
+        const newDate = new Date(year, monthNumber)
+        setStartDate(newDate)
+    }, [props.DialogStatus])
+
 
     const change_month_and_year = (date) => {
         setStartDate(date)
@@ -184,10 +254,20 @@ function AdminAddBoardComponent(props) {
         setPaper({ ...paper, year: year.toString(), month: month })
     }
 
-    return (<section className="add_board_main" >
-        <div className="add_board_child px-md-5 px-4" >
-            <h1 className="text-center board_titile py-3" > Paper Meta Data </h1>
-            <form className="board_form mx-auto" onSubmit={submit_data} id="myForm">
+    return (
+        <div>
+            <Dialog
+                open={open}
+                TransitionComponent={Transition}
+                keepMounted
+                fullWidth="true"
+                maxWidth="sm"
+                onClose={props.handleClose}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogContent className="px-5">
+                <form className="board_form mx-auto" onSubmit={submit_data} id="myForm">
                 <div className="form-group">
                     <label htmlFor="system">Select System : </label>
                     <select value={paper.system} id="system" name="system" onChange={change_input} id="grouped-select" className="form-control form-select" required>
@@ -261,22 +341,15 @@ function AdminAddBoardComponent(props) {
                     <button type="submit" className="btn px-5 py-2 bg-info mybutton">Submit</button>
                 </div>
             </form>
+                    <ModelNotification DialogStatus={notificationStatus} DialogTitle="Notification" DialogDesc="Please Select Year and month." handleClose={() => setNotificationStatus(false)} DialogOk="Ok" />
+                </DialogContent>
+                <DialogActions>
+
+                </DialogActions>
+            </Dialog>
         </div>
-        <ModelNotification DialogStatus={notificationStatus} DialogTitle="Notification" DialogDesc="Please Select Year and month." handleClose={() => setNotificationStatus(false)} DialogOk="Ok" /> { /* Modal For Confirmation */} { /* Confirm Modal Dialog Status */}
-        <ConfirmDialog okButton="continue" delete_mcq_by_id={() => history.push("/admin/panel/add/mcqs")} ConfirmDialog={confirmDialogStatus} ConfirmDesc="Your Paper Already in Progress.Are you sure you want to continue with last Paper? if you add another data old data will be deleted." handleClose={() => setConfirmDialogStatus(false)} /> </section>
-    )
+    );
 }
 
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        add_board: (data) => {
-            dispatch(add_board(data))
-        },
-        reset_mcq: () => {
-            dispatch(reset_mcq())
-        }
-    }
-}
-
-export default connect(null, mapDispatchToProps)(AdminAddBoardComponent);
+export default DialogModalMetaData;

@@ -11,7 +11,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Button , TextField} from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
+<<<<<<< HEAD
 // import axios from 'axios'
+=======
+>>>>>>> exam105-55
 import axios from 'axios'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -41,16 +44,14 @@ function AdminIndex(props) {
         setValues({ ...values, [prop]: e.target.value });
     };
 
-    const handleClickShowPassword = () => {
-        setValues({ ...values, showPassword: !values.showPassword });
-    };
 
-    const handleMouseDownPassword = (e) => {
-        e.preventDefault();
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+<<<<<<< HEAD
+=======
+        
+>>>>>>> exam105-55
         axios({
             method: 'post',
             url: '/superuser/login',
@@ -66,7 +67,10 @@ function AdminIndex(props) {
           .catch(err => 
             setDialogStatus(true)
           )
+<<<<<<< HEAD
         
+=======
+>>>>>>> exam105-55
     }
 
 

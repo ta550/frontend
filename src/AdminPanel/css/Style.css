@@ -1,4 +1,5 @@
-.admnh_login_main{
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+.admnh_login_main {
     width: 100%;
     min-height: 100vh;
     display: flex;
@@ -6,14 +7,65 @@
     justify-content: center;
     background: #F5F3F9;
 }
-.admin_login_form{
+
+.admin_login_form {
     width: 40%;
     padding-bottom: 10px;
     background: white;
 }
-.AdminPasswordField, .AdminUserField{
+
+.AdminPasswordField,
+.AdminUserField {
     background-color: transparent !important;
 }
-#filled-adornment-password , #standard-basic{
-    background-color: transparent !important; 
+
+#filled-adornment-password,
+#standard-basic {
+    background-color: transparent !important;
+}
+
+.onHoverBoldText:hover {
+    font-weight: bold !important;
+}
+
+.MuiPaper-elevation1 {
+    box-shadow: none !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.MuiCircularProgress-root {
+    width: 100px !important;
+    height: 100px !important;
+}
+
+.simple-header-font {
+    font-family: 'Roboto Slab', serif;
+}
+
+.seeSomeText {
+    width: 90vw;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#mydiv {
+    position: fixed;
+    width: 200px !important;
+    z-index: 9;
+    background-color: #f1f1f1;
+    text-align: center;
+    border: 1px solid #d3d3d3;
+}
+#mydivheader {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    background-color: #2196F3;
+    color: #fff;
 }

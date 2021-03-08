@@ -32,7 +32,8 @@ export const add_mcq = data => {
         question: data.question,
         marks: data.marks, 
         options: data.options,
-        topics: data.topics
+        topics: data.topics,
+        images: data.images
     };
 };
 
@@ -44,7 +45,8 @@ export const update_mcq = data => {
         index: data.index,
         marks: data.marks, 
         topics: data.topics,
-        options: data.options
+        options: data.options,
+        images: data.images
     };
 };
 

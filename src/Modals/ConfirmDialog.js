@@ -5,7 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
-import {Button} from '@material-ui/core'
+import { Button } from '@material-ui/core'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -14,6 +14,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function ConfirmDialog(props) {
     return (
         <Dialog
+            style={{ zIndex: '2' }}
             open={props.ConfirmDialog}
             TransitionComponent={Transition}
             keepMounted
@@ -26,15 +27,15 @@ function ConfirmDialog(props) {
             <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description">
                     {props.ConfirmDesc}
-                        </DialogContentText>
+                </DialogContentText>
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.handleClose} color="primary">
-                    cancel
-                        </Button>
+                    {(props.cancelButton === undefined ? (<p className="m-0">Cancel</p>) : (<p className="m-0">{props.cancelButton}</p>))}
+                </Button>
                 <Button onClick={props.delete_mcq_by_id} color="primary">
-                    Yes
-                        </Button>
+                    {(props.okButton === undefined ? (<p className="m-0">Yes</p>) : (<p className="m-0">{props.okButton}</p>))}
+                </Button>
             </DialogActions>
         </Dialog>
     )

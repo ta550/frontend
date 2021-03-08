@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -19,32 +19,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import {Button} from '@material-ui/core'
-import { NavLink, useHistory } from 'react-router-dom'
+import { Button } from '@material-ui/core'
 import { MdModeEdit } from "react-icons/md"
+import SelectDialog from '../../Modals/SelectDialog'
+import { useHistory } from 'react-router-dom'
+import EnhancedTableToolbar from './EnhancedTableToolbar'
+import { useSelector } from 'react-redux'
 
-function createData(system, board, subject, year, month, series, paper, operations) {
-  return { system, board, subject, year, month, series, paper, operations };
-}
-
-const rows = [
-  createData('SYSTEM1', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM2', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM3', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM4', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM5', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM6', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM7', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM8', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM9', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM10', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM11', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM12', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM13', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM14', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-  createData('SYSTEM15', 'BOARD', 'SUBJECT', 'YEAR', 'MONTH', 'SERIES', 'PAPER'),
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -155,55 +136,6 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
-const EnhancedTableToolbar = (props) => {
-  const classes = useToolbarStyles();
-  const { selected } = props;
-  const numSelected = selected.length;
-  const history = useHistory();
-  console.log(selected)
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-          {numSelected} selected
-        </Typography>
-      ) : (
-          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-            Papers List
-          </Typography>
-        )}
-
-      {numSelected === 1 ? (
-        <div className="d-flex">
-          <IconButton aria-label="Delete Paper">
-            <DeleteIcon />
-          </IconButton>
-          <IconButton aria-label="Edit Paper">
-            <MdModeEdit />
-          </IconButton>
-        </div>
-      ) : (
-          (numSelected > 0) ? (
-            <Tooltip title="Delete Papers">
-              <IconButton aria-label="delete">
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-
-              <Tooltip title="Add Paper">
-                <Button variant="outlined" color="primary" style={{ width: '15%' }} onClick={() => history.push("/admin/panel/add/papers")}>
-                        Add Paper
-                </Button>
-              </Tooltip>
-            ))}
-    </Toolbar>
-  );
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -231,12 +163,46 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AdminPapersComponent() {
   const classes = useStyles();
+  const [rows, setRows] = React.useState([]);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(15);
+  const [id, setId] = React.useState([])
+  const loginReducer = useSelector(state => state.loginReducer)
+  const [getData, setGetData] = React.useState("")
+  const [progressBarStatus, setProgressBarStatus] = React.useState("")
+
+
+
+
+
+  React.useEffect(() => {
+    setId([])
+    setProgressBarStatus('')
+    fetch("/dashboard/de/metadata", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${loginReducer}`
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.message) {
+          setRows([])
+          setSelected([])
+        } else { 
+          setProgressBarStatus('d-none')
+          setRows(res)
+        }
+      })
+      .catch(err => console.log(err))
+  }, [getData])
+
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -248,34 +214,57 @@ export default function AdminPapersComponent() {
     if (event.target.checked) {
       const newSelecteds = rows.map((n, index) => index);
       setSelected(newSelecteds);
+      const newId = rows.map((n, index) => n.id)
+      setId(newId)
       return;
     }
+    setId([])
     setSelected([]);
   };
 
-  const handleClick = (event, index) => {
+  const handleClick = (event, index, id2) => {
     const selectedIndex = selected.indexOf(index);
+    const selectedId = id.indexOf(id2)
     let newSelected = [];
+    let newId = []
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, index);
+      newId = newId.concat(id, id2);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
+      newId = newId.concat(id.slice(1));
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
+      newId = newId.concat(id.slice(0, -1));
     } else if (selectedIndex > 0) {
+      newId = newId.concat(
+        id.slice(0, selectedId),
+        id.slice(selectedId + 1)
+      )
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
         selected.slice(selectedIndex + 1),
       );
     }
 
+    setId(newId)
     setSelected(newSelected);
   };
+
+  const callUseEffect = () => {
+    if (!getData) {
+      setGetData(true)
+    } else {
+      setGetData(false)
+    }
+  }
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
     setSelected([])
+    setId([])
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -287,6 +276,7 @@ export default function AdminPapersComponent() {
     setDense(event.target.checked);
   };
 
+
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -294,10 +284,10 @@ export default function AdminPapersComponent() {
   return (
     <div className={`${classes.root} container d-flex align-items-center flex-column mt-5`}>
       <Paper className={`${classes.paper} `}>
-        <EnhancedTableToolbar selected={selected} />
-        <TableContainer>
+        <EnhancedTableToolbar data={rows} progressBarStatus={progressBarStatus} id={id} selected={selected} callUseEffect={callUseEffect} />
+        <TableContainer style={{ boxShadow: "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)" }}>
           <Table
-            className={`${classes.table} text-white`}
+            className={`${classes.table} mb-3 text-white`}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
             aria-label="enhanced table"
@@ -321,11 +311,11 @@ export default function AdminPapersComponent() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, index)}
+                      onClick={(event) => handleClick(event, index, row.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.id}
+                      key={index}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -356,7 +346,7 @@ export default function AdminPapersComponent() {
         </TableContainer>
         <TablePagination
           style={{ border: 'none' }}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 15, 20, 25]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -365,10 +355,10 @@ export default function AdminPapersComponent() {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
+      {/* <FormControlLabel
         control={<Switch color="primary" checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-      />
+      /> */}
     </div>
   );
 }

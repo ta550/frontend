@@ -3,7 +3,7 @@ import '../css/AdminAddmcqs.css'
 import { FcPlus } from 'react-icons/fc'
 import $ from 'jquery'
 import { MathpixLoader, MathpixMarkdown } from "mathpix-markdown-it";
-import { add_mcq, remove_mcq, reset_mcq , reset_board , update_mcq } from '../../action/index'
+import { add_mcq, remove_mcq, reset_mcq, reset_board, update_mcq } from '../../action/index'
 import { connect, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import Button from '@material-ui/core/Button';
@@ -12,18 +12,20 @@ import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios'
 // Dialog Box
 import Slide from '@material-ui/core/Slide';
-import ModelNotification from './ModelNotification'
-import ConfirmDialog from './ConfirmDialog'
+import ModelNotification from '../../Modals/ModelNotification'
+import ConfirmDialog from '../../Modals/ConfirmDialog'
 import LinearProgressWithLabel from './LinearProgressBarWithLabel'
 import Backdrop from '@material-ui/core/Backdrop';
 import { makeStyles } from '@material-ui/core/styles';
+import S3 from 'react-aws-s3';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 const useStyles = makeStyles((theme) => ({
-   backdrop: {
-      zIndex: theme.zIndex.drawer + 1,
-      color: '#fff',
-   },
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -44,12 +46,18 @@ function AdminAddmcqsComponent(props) {
     const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
     const [ConfirmDialogStatus, setConfirmDialog] = React.useState(false);
     const [markdownFontSize, setMarkdownFontSize] = React.useState("14px");
+<<<<<<< HEAD
+=======
+    const [deleteImagesNames, setDeleteImagesNames] = React.useState([])
+    const [images, setImages] = React.useState([])
+    const [config, setConfig] = React.useState()
+>>>>>>> exam105-55
     // Dialog Hooks
     const [DialogStatus, setDialogStatus] = React.useState(false);
     const [DialogDesc, setDialogDesc] = React.useState("Are you Sure?");
     const [DialogTitle, setDialogTitle] = React.useState("Notification");
     const [DialogOk, setDialogOk] = React.useState("Ok");
-    const [ProgressBarStatus , setProgressBarStatus] = useState(false)
+    const [ProgressBarStatus, setProgressBarStatus] = useState(false)
     const classes = useStyles();
     const [progress, setProgress] = useState(10);
     // React Redux
@@ -59,16 +67,43 @@ function AdminAddmcqsComponent(props) {
     // for navigation
     const history = useHistory();
 
+
     useEffect(() => {
+
+        // GET S3 CREDANTIONS
+        fetch("/dashboard/de/question/s3credentials", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${loginReducer}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (!res.message) {
+                    setConfig({
+                        bucketName: "exam105",
+                        dirName: boardReducer[0].subject,
+                        region: res.region,
+                        accessKeyId: res.accesskey,
+                        secretAccessKey: res.secretkey
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            }
+            )
+
         if (boardReducer.length === 0) {
             history.push("/admin/panel/add/papers/")
         }
         const timer = setInterval(() => {
             setProgress((prevProgress) => (prevProgress >= 90 ? 10 : prevProgress + 7));
-         }, 800);
-         return () => {
+        }, 800);
+        return () => {
             clearInterval(timer);
-         };
+        };
     }, [])
     // Math compiler
     // question input changehandler
@@ -140,13 +175,19 @@ function AdminAddmcqsComponent(props) {
         setOptions(items)
     }
     // on mcq added
-    const add_mcq = () => {
+    const add_mcq = async () => {
         const mark = $('.marks').val();
         if (question === "" || mark === "" || options.length === 0) {
+<<<<<<< HEAD
             if (question === "") { setDialogDesc("Question Field Are Required!")  }
             else if (mark === "") { setDialogDesc("Marks Field Are Required!")  }
             else { setDialogDesc("Options are Missing!") }
             
+=======
+            if (question === "") { setDialogDesc("Question Field Are Required!") }
+            else if (mark === "") { setDialogDesc("Marks Field Are Required!") }
+            else { setDialogDesc("Options are Missing!") }
+>>>>>>> exam105-55
             setDialogStatus(true)
         } else {
             const items = [...options];
@@ -157,16 +198,49 @@ function AdminAddmcqsComponent(props) {
                 }
             }
             if (status === 1) {
-                const data = {
-                    question: question,
-                    marks: mark,
-                    options: options,
-                    topics: topics
+                const ReactS3Client = new S3(config);
+
+                var imageLocations = new Array();
+                var loopComplete = false;
+                var files = images
+                if (files.length > 0) {
+                    for (var i = 0; i < files.length; i++) {
+                        if (i + 1 === files.length) {
+                            loopComplete = true;
+                        }
+                        ReactS3Client
+                            .uploadFile(files[i], files[i].name)
+                            .then(res => {
+                                const imageURL = { "imageurl": res.location }
+                                imageLocations.push(imageURL)
+                            })
+                            .catch(err => {
+                                loopComplete = false;
+                                setDialogDesc("Images Added Failed. Please Try Again!")
+                                setDialogStatus(true)
+                                console.log(err)
+                            })
+                    }
+                } else {
+                    loopComplete = true;
                 }
-                props.changeState(data)
-                setOptions([])
-                setQuestion("")
-                setTopics([])
+
+                if (loopComplete === true) {
+                    const data = {
+                        question: question,
+                        marks: mark,
+                        options: options,
+                        topics: topics,
+                        images: imageLocations
+                    }
+                    props.changeState(data)
+                    setOptions([])
+                    setQuestion("")
+                    setTopics([])
+                    setImages([])
+                    var filesInput = $('.upload_images_input_for_mcqs');
+                    filesInput.replaceWith(filesInput.val(''));
+                }
             } else {
                 setDialogDesc("Chose The correct Option")
                 setDialogStatus(true)
@@ -182,6 +256,8 @@ function AdminAddmcqsComponent(props) {
         setQuestion(mcqReducer[e].questions)
         $('.marks').val(mcqReducer[e].marks);
         setTopics(mcqReducer[e].topics)
+        const imageurls = mcqReducer[e].images;
+        setImages(imageurls)
         // Selected Options
         var optionsbyindex = mcqReducer[e].options;
         SelectedOptionsBackgroundChange(optionsbyindex)
@@ -206,17 +282,64 @@ function AdminAddmcqsComponent(props) {
                     }
                 }
                 if (status === 1) {
-                    const mark = $('.marks').val();
-                    const data = { question: question, marks: mark, options: options, topics: topics, index: window.value }
-                    props.updateState(data)
-                    setQuestion("")
-                    setOptions([])
-                    setTopics([])
-                    setOpenAlertUpdate(true)
-                    mcqButtonChangeBorder(-1)
-                    $('.next_mcq_button').css("display", "inline")
-                    $('.update_mcq_button').css("display", "none");
-                    $('.delete_mcq_button').css("display", "none");
+                    const ReactS3Client = new S3(config);
+
+                    for (var i = 0; i < deleteImagesNames.length; i++) {
+                        ReactS3Client.deleteFile(deleteImagesNames[i])
+                    }
+
+                    var imageLocations = [];
+                    var loopComplete = false;
+                    var files = images;
+                    if (files.length !== 0) {
+                        for (var i = 0; i < files.length; i++) {
+                            if (i + 1 === files.length) {
+                                loopComplete = true;
+                            }
+                            if (!files[i].imageurl) {
+                                ReactS3Client
+                                    .uploadFile(files[i], files[i].name)
+                                    .then(res => {
+                                        const imageURL = { "imageurl": res.location }
+                                        imageLocations.push(imageURL)
+                                    })
+                                    .catch(err => {
+                                        loopComplete = false;
+                                        setDialogDesc("Images Added Failed. Please Try Again!")
+                                        setDialogStatus(true)
+                                        console.log(err)
+                                    })
+                            } else {
+                                imageLocations.push(files[i])
+                            }
+                        }
+                    }else {
+                        loopComplete = true;
+                    }
+
+
+                    if (loopComplete === true) {
+                        const mark = $('.marks').val();
+
+                        const data = {
+                            question: question, marks: mark, options: options, topics: topics, index: window.value,
+                            images: imageLocations
+                        }
+                        props.updateState(data)
+                        setQuestion("")
+                        setOptions([])
+                        setTopics([])
+                        setOpenAlertUpdate(true)
+                        mcqButtonChangeBorder(-1)
+                        setImages([])
+                        $('.next_mcq_button').css("display", "inline")
+                        $('.update_mcq_button').css("display", "none");
+                        $('.delete_mcq_button').css("display", "none");
+                    } else {
+                        console.log(imageLocations)
+                        setDialogDesc("Some Went Wrong Please Try Again")
+                        setDialogStatus(true)
+                    }
                 } else {
                     setDialogDesc("Chose The Correct Option")
                     setDialogStatus(true)
@@ -238,6 +361,7 @@ function AdminAddmcqsComponent(props) {
             setTopics([])
             mcqButtonChangeBorder(-1)
             setOpenAlertDelete(true);
+            setImages([])
             $('.next_mcq_button').css("display", "inline")
             $('.update_mcq_button').css("display", "none");
             $('.delete_mcq_button').css("display", "none");
@@ -261,15 +385,6 @@ function AdminAddmcqsComponent(props) {
     const question_output_hide_show = () => {
         $('.question_output').slideToggle();
     }
-    // Create JSON
-    const send_json = () => {
-        const array = new Array(boardReducer[0]);
-        mcqReducer.map((item, i) => {
-            array.push(item)
-        })
-        const jsonData = JSON.stringify(array);
-        document.write(jsonData)
-    }
     // Close Alert
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -287,23 +402,23 @@ function AdminAddmcqsComponent(props) {
         mcqReducer.map((item, i) => {
             data.push(item)
         })
-        fetch("/dashboard/de/questions",{
-            method: 'POST', 
+        fetch("/dashboard/de/questions", {
+            method: 'POST',
             headers: {
-               'Content-Type': 'application/json',
-               'Authorization': `Bearer ${loginReducer}`
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${loginReducer}`
             },
             body: JSON.stringify(data),
         })
-        .then(res => res.json())
-        .then(res => {
-            console.log(res)
-            props.resetState();
-            props.resetBoard();
-            setProgressBarStatus(false)
-            history.push("/admin/panel/papers")
-        })
-        .catch((err)=> {
+            .then(res => res.json())
+            .then(res => {
+                console.log(data)
+                props.resetState();
+                props.resetBoard();
+                setProgressBarStatus(false)
+                history.push("/admin/panel/papers")
+            })
+            .catch((err) => {
                 console.log(err)
                 setProgressBarStatus(false)
                 setDialogDesc("Some went wrong. please try Again..")
@@ -311,6 +426,53 @@ function AdminAddmcqsComponent(props) {
             }
         )
     }
+
+    // On custom add images
+    const handleAddImage = (e) => {
+        e.preventDefault();
+        let files = e.target.files
+        var newFiles = []
+
+        var oldImageNames = []
+        for (var i = 0; i < images.length; i++) {
+            var lastSegment = "";
+            if (images[i].imageurl) {
+                var parts = images[i].imageurl.split('/');
+                lastSegment = parts.pop() || parts.pop();
+                oldImageNames.push(lastSegment)
+            } else {
+                oldImageNames.push(images[i].name)
+            }
+        }
+
+        for (var i = 0; i < files.length; i++) {
+            if (!oldImageNames.includes(files[i].name)) {
+                newFiles.push(files[i])
+            }
+        }
+
+        setImages([...images, ...newFiles]);
+
+        var filesInput = $('.upload_images_input_for_mcqs');
+        filesInput.replaceWith(filesInput.val(''));
+    }
+
+    const deleteImage = (data) => {
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].imageurl) {
+                if (images[i].imageurl === images[data].imageurl) {
+                    const parts = images[data].imageurl.split('/');
+                    const lastSegment = parts.pop() || parts.pop();
+                    setDeleteImagesNames([...deleteImagesNames, lastSegment])
+                    setImages(images.filter((item, index) => index !== data))
+                    console.log(deleteImagesNames);
+                }
+            } else {
+                setImages(images.filter((item, index) => index !== data))
+            }
+        }
+    };
+
     return (
         <section className="add_mcq_main pt-3">
             {/* Add MCQs Child  */}
@@ -348,7 +510,11 @@ function AdminAddmcqsComponent(props) {
                                 <textarea className="form-control" placeholder="Enter Question" rows="5" value={question} onChange={questionChange} required></textarea>
                             </div>
                             <div className="row">
+<<<<<<< HEAD
                                 <select value={markdownFontSize} onChange={(e) => setMarkdownFontSize(e.target.value) } className="small ml-3" style={{height: '25px'}}>
+=======
+                                <select value={markdownFontSize} onChange={(e) => setMarkdownFontSize(e.target.value)} className="small ml-3" style={{ height: '25px' }}>
+>>>>>>> exam105-55
                                     <option value="12px">12px</option>
                                     <option value="13px">13px</option>
                                     <option value="14px">14px</option>
@@ -357,7 +523,11 @@ function AdminAddmcqsComponent(props) {
                                 </select>
                                 <button type="button" onClick={question_output_hide_show} className="btn mr-3 btn-sm btn-info mybutton mb-2 d-flex ml-auto">Hide / Show</button>
                             </div>
+<<<<<<< HEAD
                             <div className="p-2 form-group question_output col-12" style={{fontSize: markdownFontSize}}>
+=======
+                            <div className="p-2 form-group question_output col-12" style={{ fontSize: markdownFontSize }}>
+>>>>>>> exam105-55
                                 <MathpixLoader>
                                     <MathpixMarkdown text={question} />
                                 </MathpixLoader>
@@ -374,7 +544,6 @@ function AdminAddmcqsComponent(props) {
                                 <div className="col-12 mx-auto mt-4">
                                     <div className="all_mcq_operations_button d-flex mx-auto justify-content-between w-100 ">
                                         <div>
-                                            <button type="button" onClick={() => history.push("/admin/panel/add/images")} className="bg-success mx-2 mt-2 btn mybutton">Next Step</button>
                                             <button type="button" onClick={finish_paper} className="bg-success mx-2 mt-2 btn mybutton">Finish</button>
                                         </div>
                                         <div>
@@ -400,9 +569,39 @@ function AdminAddmcqsComponent(props) {
                                 </div>
                                 <div className="row">
                                     {topics.map((item, i) => {
+<<<<<<< HEAD
                                         return <div key={i} className={`topicDisplay`} style={{fontSize: '12px',fontWeight: '500'}}><p className="option_text my-1">{item.topic}</p><span className="delete_topic" style={{fontSize: '16px'}} onClick={() => deleteTopic(i)}>&times;</span></div>
+=======
+                                        return <div key={i} className={`topicDisplay`} style={{ fontSize: '12px', fontWeight: '500' }}><p className="option_text my-1">{item.topic}</p><span className="delete_topic" style={{ fontSize: '16px' }} onClick={() => deleteTopic(i)}>&times;</span></div>
+>>>>>>> exam105-55
                                     })}
                                 </div>
+                            </div>
+                        </form>
+                        <br />
+                        <form className="bg-white py-4 px-3" style={{ borderRadius: '20px', boxShadow: '0px 0px 2px black' }}>
+                            <input
+                                accept="image/*"
+                                className={`upload_images_input_for_mcqs small`}
+                                id="raised-button-file"
+                                onChange={handleAddImage}
+                                multiple
+                                type="file"
+                            />
+                            <div className="row">
+                                {images.map((item, i) => {
+                                    if (item.imageurl) {
+                                        return <div className="position-relative d-flex align-items-center w-50">
+                                            <img alt="Image Error" style={{ height: '80px', width: '100%' }} className="img-fluid p-2" src={item.imageurl} />
+                                            <DeleteIcon onClick={() => deleteImage(i)} className="bg-dark text-white rounded cursor-pointer" style={{ position: 'absolute',top:'0', right: '0' }} />
+                                        </div>
+                                    }
+                                    var url = URL.createObjectURL(item)
+                                    return <div className="position-relative d-flex align-items-center w-50">
+                                        <img alt="Image Error" style={{ height: '80px', width: '100%' }} className="img-fluid p-2" src={url} />
+                                        <DeleteIcon onClick={() => deleteImage(i)} className="bg-dark text-white rounded cursor-pointer" style={{ position: 'absolute',top:'0', right: '0' }} />
+                                    </div>
+                                })}
                             </div>
                         </form>
                     </div>
@@ -410,12 +609,12 @@ function AdminAddmcqsComponent(props) {
             </div>
             <br />
             {/* Alerts */}
-            <Snackbar open={openAlertDelete} autoHideDuration={5000} onClose={handleClose}>
+            <Snackbar open={openAlertDelete} autoHideDuration={2000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success">
                     Deleted Successfull
                 </Alert>
             </Snackbar>
-            <Snackbar open={openAlertUpdate} autoHideDuration={5000} onClose={handleClose}>
+            <Snackbar open={openAlertUpdate} autoHideDuration={2000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success">
                     Updated Successfull
                 </Alert>
