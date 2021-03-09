@@ -2,11 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-<<<<<<< HEAD
-  "proxy": "http://18.140.51.127:9090/",
-=======
   "proxy": "http://54.255.95.50:9090/",
->>>>>>> exam105-55
   "dependencies": {
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",

@@ -46,12 +46,9 @@ function AdminAddmcqsComponent(props) {
     const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
     const [ConfirmDialogStatus, setConfirmDialog] = React.useState(false);
     const [markdownFontSize, setMarkdownFontSize] = React.useState("14px");
-<<<<<<< HEAD
-=======
     const [deleteImagesNames, setDeleteImagesNames] = React.useState([])
     const [images, setImages] = React.useState([])
     const [config, setConfig] = React.useState()
->>>>>>> exam105-55
     // Dialog Hooks
     const [DialogStatus, setDialogStatus] = React.useState(false);
     const [DialogDesc, setDialogDesc] = React.useState("Are you Sure?");
@@ -178,16 +175,9 @@ function AdminAddmcqsComponent(props) {
     const add_mcq = async () => {
         const mark = $('.marks').val();
         if (question === "" || mark === "" || options.length === 0) {
-<<<<<<< HEAD
-            if (question === "") { setDialogDesc("Question Field Are Required!")  }
-            else if (mark === "") { setDialogDesc("Marks Field Are Required!")  }
-            else { setDialogDesc("Options are Missing!") }
-            
-=======
             if (question === "") { setDialogDesc("Question Field Are Required!") }
             else if (mark === "") { setDialogDesc("Marks Field Are Required!") }
             else { setDialogDesc("Options are Missing!") }
->>>>>>> exam105-55
             setDialogStatus(true)
         } else {
             const items = [...options];
@@ -218,8 +208,7 @@ function AdminAddmcqsComponent(props) {
                                 loopComplete = false;
                                 setDialogDesc("Images Added Failed. Please Try Again!")
                                 setDialogStatus(true)
-                                console.log(err)
-                            })
+                            });
                     }
                 } else {
                     loopComplete = true;
@@ -510,11 +499,7 @@ function AdminAddmcqsComponent(props) {
                                 <textarea className="form-control" placeholder="Enter Question" rows="5" value={question} onChange={questionChange} required></textarea>
                             </div>
                             <div className="row">
-<<<<<<< HEAD
-                                <select value={markdownFontSize} onChange={(e) => setMarkdownFontSize(e.target.value) } className="small ml-3" style={{height: '25px'}}>
-=======
                                 <select value={markdownFontSize} onChange={(e) => setMarkdownFontSize(e.target.value)} className="small ml-3" style={{ height: '25px' }}>
->>>>>>> exam105-55
                                     <option value="12px">12px</option>
                                     <option value="13px">13px</option>
                                     <option value="14px">14px</option>
@@ -523,11 +508,7 @@ function AdminAddmcqsComponent(props) {
                                 </select>
                                 <button type="button" onClick={question_output_hide_show} className="btn mr-3 btn-sm btn-info mybutton mb-2 d-flex ml-auto">Hide / Show</button>
                             </div>
-<<<<<<< HEAD
-                            <div className="p-2 form-group question_output col-12" style={{fontSize: markdownFontSize}}>
-=======
                             <div className="p-2 form-group question_output col-12" style={{ fontSize: markdownFontSize }}>
->>>>>>> exam105-55
                                 <MathpixLoader>
                                     <MathpixMarkdown text={question} />
                                 </MathpixLoader>
@@ -569,11 +550,7 @@ function AdminAddmcqsComponent(props) {
                                 </div>
                                 <div className="row">
                                     {topics.map((item, i) => {
-<<<<<<< HEAD
-                                        return <div key={i} className={`topicDisplay`} style={{fontSize: '12px',fontWeight: '500'}}><p className="option_text my-1">{item.topic}</p><span className="delete_topic" style={{fontSize: '16px'}} onClick={() => deleteTopic(i)}>&times;</span></div>
-=======
                                         return <div key={i} className={`topicDisplay`} style={{ fontSize: '12px', fontWeight: '500' }}><p className="option_text my-1">{item.topic}</p><span className="delete_topic" style={{ fontSize: '16px' }} onClick={() => deleteTopic(i)}>&times;</span></div>
->>>>>>> exam105-55
                                     })}
                                 </div>
                             </div>
