@@ -42,6 +42,10 @@ export default function SeeQuestion(props) {
 
   React.useEffect(() => {
     if (window.SeeQuestionId !== undefined) {
+          setOptions([])
+          setTopics([])
+          setQuestion("")
+          setImages([])
       fetch(`/dashboard/de/question/${window.SeeQuestionId}`, {
         method: 'GET',
         headers: {
@@ -53,10 +57,8 @@ export default function SeeQuestion(props) {
         .then(res => {
           setQuestion(res.questions)
           setOptions(res.options)
-          console.log(res.topics)
           if (res.images) {
             setImages(res.images)
-            console.log(res.images)
           } else {
             setImages([])
           }

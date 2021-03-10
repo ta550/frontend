@@ -181,6 +181,7 @@ export default function AdminPapersComponent() {
 
   React.useEffect(() => {
     setId([])
+    setSelected([])
     setProgressBarStatus('')
     fetch("/dashboard/de/metadata", {
       method: 'GET',
@@ -270,10 +271,6 @@ export default function AdminPapersComponent() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
   };
 
 
