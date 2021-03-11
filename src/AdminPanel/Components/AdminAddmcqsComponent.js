@@ -33,10 +33,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
@@ -212,6 +208,7 @@ function AdminAddmcqsComponent(props) {
     setProgressBarStatus(false);
     mcqButtonChangeBorder(-1);
     setImages([]);
+    window.value = undefined;
     $(".next_mcq_button").css("display", "inline");
     $(".update_mcq_button").css("display", "none");
     $(".delete_mcq_button").css("display", "none");
@@ -220,11 +217,18 @@ function AdminAddmcqsComponent(props) {
   const add_mcq = async () => {
     // Validation
     const mark = $(".marks").val();
-    if (question === "" || mark === "" || options.length === 0) {
+    if (
+      question === "" ||
+      mark === "" ||
+      options.length === 0 ||
+      window.value === undefined
+    ) {
       if (question === "") {
         setDialogDesc("Question Field Are Required!");
       } else if (mark === "") {
         setDialogDesc("Marks Field Are Required!");
+      } else if ((window.value = undefined)) {
+        setDialogDesc("Please again select mcqs!");
       } else {
         setDialogDesc("Options are Missing!");
       }
@@ -267,23 +271,30 @@ function AdminAddmcqsComponent(props) {
   };
   // Get Old Mcq for Update
   const getOldMcq = (e) => {
-    window.value = e;
-    setDeleteImagesNames([]);
-    mcqButtonChangeBorder(e);
-    setTopics([]);
-    setOptions(mcqReducer[e].options);
-    setQuestion(mcqReducer[e].questions);
-    $(".marks").val(mcqReducer[e].marks);
-    setTopics(mcqReducer[e].topics);
-    const imageurls = mcqReducer[e].images;
-    setImages(imageurls);
-    // Selected Options
-    var optionsbyindex = mcqReducer[e].options;
-    SelectedOptionsBackgroundChange(optionsbyindex);
-    // Hide and show buttons
-    $(".next_mcq_button").css("display", "none");
-    $(".update_mcq_button").css("display", "inline");
-    $(".delete_mcq_button").css("display", "inline");
+    if (question !== "" && window.value === undefined) {
+      setDialogDesc(
+        "If you navigate old question then this question will be loss. Please first save this question or reset this question."
+      );
+      setDialogStatus(true);
+    } else {
+      window.value = e;
+      setDeleteImagesNames([]);
+      mcqButtonChangeBorder(e);
+      setTopics([]);
+      setOptions(mcqReducer[e].options);
+      setQuestion(mcqReducer[e].questions);
+      $(".marks").val(mcqReducer[e].marks);
+      setTopics(mcqReducer[e].topics);
+      const imageurls = mcqReducer[e].images;
+      setImages(imageurls);
+      // Selected Options
+      var optionsbyindex = mcqReducer[e].options;
+      SelectedOptionsBackgroundChange(optionsbyindex);
+      // Hide and show buttons
+      $(".next_mcq_button").css("display", "none");
+      $(".update_mcq_button").css("display", "inline");
+      $(".delete_mcq_button").css("display", "inline");
+    }
   };
   // Update Mcq By its Id
   const update_mcq_by_id = () => {
@@ -645,6 +656,7 @@ function AdminAddmcqsComponent(props) {
                           setImages([]);
                           setDeleteImagesNames([]);
                           $(".marks").val("");
+                          window.value = undefined;
                           mcqButtonChangeBorder(-1);
                           $(".next_mcq_button").css("display", "inline");
                           $(".update_mcq_button").css("display", "none");
@@ -652,7 +664,7 @@ function AdminAddmcqsComponent(props) {
                         }}
                         className="bg-success mx-2 mt-2 btn mybutton"
                       >
-                        Clear
+                        Reset
                       </button>
                     </div>
                     <div>
