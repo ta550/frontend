@@ -10,19 +10,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { Button } from '@material-ui/core'
-import { MdModeEdit } from "react-icons/md"
-import SelectDialog from '../../Modals/SelectDialog'
-import { useHistory } from 'react-router-dom'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
 import { useSelector } from 'react-redux'
 
@@ -116,26 +105,6 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const useToolbarStyles = makeStyles((theme) => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-      }
-      : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
-      },
-  title: {
-    flex: '1 1 100%',
-  },
-}));
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -181,6 +150,7 @@ export default function AdminPapersComponent() {
 
   React.useEffect(() => {
     setId([])
+    setSelected([])
     setProgressBarStatus('')
     fetch("/dashboard/de/metadata", {
       method: 'GET',
@@ -270,10 +240,6 @@ export default function AdminPapersComponent() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
   };
 
 
