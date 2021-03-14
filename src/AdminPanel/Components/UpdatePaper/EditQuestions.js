@@ -350,6 +350,10 @@ function EditQuestion(props) {
                     }
                   })
                   .catch((err) => {
+                    setDialogDesc(
+                      `This ${image.name} is not uploaded. Please Try Again.`
+                    );
+                    setDialogStatus(true);
                     console.log(err);
                   });
               } else {
