@@ -161,6 +161,44 @@ function EditQuestion(props) {
   // Get Mcqs From API
   React.useEffect(() => {
     if (window.EditQuestionId !== undefined) {
+      if (
+        !config.bucketName ||
+        !config.dirName ||
+        !config.accessKeyId ||
+        !config.secretAccessKey ||
+        config === null
+      ) {
+        // GET S3 CREDANTIONS
+        fetch("/dashboard/de/question/s3credentials", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${loginReducer}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (!res.message) {
+              if (!metadata.subject) {
+                onClose(false);
+                props.getAllQuestions();
+              } else {
+                setConfig({
+                  bucketName: "exam105",
+                  region: res.region,
+                  dirName: metadata.subject,
+                  accessKeyId: res.accesskey,
+                  secretAccessKey: res.secretkey,
+                });
+                console.log(config);
+              }
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
       setProgressBarStatus(true);
       fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
         method: "GET",
@@ -348,7 +386,10 @@ function EditQuestion(props) {
                     imageLocations.push(imageURL);
                     if (imageLocations.length === images.length) {
                       if (imageLocations.length === images.length) {
-                        update_questions_after_image_upload(imageLocations, mark);
+                        update_questions_after_image_upload(
+                          imageLocations,
+                          mark
+                        );
                       }
                     }
                   })
