@@ -217,12 +217,7 @@ function AdminAddmcqsComponent(props) {
   const add_mcq = async () => {
     // Validation
     const mark = $(".marks").val();
-    if (
-      question === "" ||
-      mark === "" ||
-      options.length === 0 ||
-      window.value === undefined
-    ) {
+    if (question === "" || mark === "" || options.length === 0) {
       if (question === "") {
         setDialogDesc("Question Field Are Required!");
       } else if (mark === "") {
@@ -244,7 +239,6 @@ function AdminAddmcqsComponent(props) {
       if (status === 1) {
         setProgressBarStatus(true);
         const ReactS3Client = new S3(config);
-
         var imageLocations = [];
         if (images.length !== 0) {
           images.map((image, i) => {
