@@ -346,12 +346,7 @@ function EditQuestion(props) {
                     const imageURL = { imageurl: res.location };
                     imageLocations.push(imageURL);
                     if (imageLocations.length === images.length) {
-                      if (imageLocations.length === images.length) {
-                        update_questions_after_image_upload(
-                          imageLocations,
-                          mark
-                        );
-                      }
+                      update_questions_after_image_upload(imageLocations, mark);
                     }
                   })
                   .catch((err) => {
@@ -360,9 +355,7 @@ function EditQuestion(props) {
               } else {
                 imageLocations.push(image);
                 if (imageLocations.length === images.length) {
-                  setTimeout(() => {
-                    update_questions_after_image_upload(imageLocations, mark);
-                  }, 1500);
+                  update_questions_after_image_upload(imageLocations, mark);
                 }
               }
             });
