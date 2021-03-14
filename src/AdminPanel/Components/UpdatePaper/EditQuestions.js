@@ -341,25 +341,20 @@ function EditQuestion(props) {
           if (images.length !== 0) {
             images.map((image, i) => {
               if (!image.imageurl) {
-                ReactS3Client.uploadFile(image,image.name)
+                ReactS3Client.uploadFile(image, image.name)
                   .then((res) => {
                     const imageURL = { imageurl: res.location };
                     imageLocations.push(imageURL);
-                    console.log(imageLocations);
                     if (imageLocations.length === images.length) {
-                      update_questions_after_image_upload(imageLocations, mark);
+                      if (imageLocations.length === images.length) {
+                        update_questions_after_image_upload(imageLocations, mark);
+                      }
                     }
                   })
                   .catch((err) => {
-                    setDialogDesc(
-                      `This ${image.name} is not uploaded. Please Try Again.`
-                    );
-                    setDialogStatus(true);
-                    setProgressBarStatus(false);
                     console.log(err);
                   });
               } else {
-                console.log(imageLocations);
                 imageLocations.push(image);
                 if (imageLocations.length === images.length) {
                   update_questions_after_image_upload(imageLocations, mark);
