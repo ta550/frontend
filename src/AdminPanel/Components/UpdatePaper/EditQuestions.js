@@ -333,6 +333,7 @@ function EditQuestion(props) {
         if (status === 1) {
           setProgressBarStatus(true);
           const ReactS3Client = new S3(config);
+          console.log(config);
           for (var i = 0; i < deleteImagesNames.length; i++) {
             ReactS3Client.deleteFile(deleteImagesNames[i]);
           }
@@ -352,6 +353,11 @@ function EditQuestion(props) {
                     }
                   })
                   .catch((err) => {
+                    setDialogDesc(
+                      `This "${image.name}" is not uploaded. Please Try Again`
+                    );
+                    setDialogStatus(false);
+                    setProgressBarStatus(true);
                     console.log(err);
                   });
               } else {

@@ -324,7 +324,7 @@ function AdminAddmcqsComponent(props) {
         for (var i = 0; i < deleteImagesNames.length; i++) {
           ReactS3Client.deleteFile(deleteImagesNames[i]);
         }
-
+        console.log(config);
         var imageLocations = [];
         if (images.length !== 0) {
           images.map((image, i) => {
@@ -340,6 +340,11 @@ function AdminAddmcqsComponent(props) {
                   }
                 })
                 .catch((err) => {
+                  setDialogDesc(
+                    `This "${image.name}" is not uploaded. Please Try Again`
+                  );
+                  setDialogStatus(false);
+                  setProgressBarStatus(true);
                   console.log(err);
                 });
             } else {
