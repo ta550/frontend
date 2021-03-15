@@ -99,10 +99,43 @@ export default function SeeQuestion(props) {
           </div>
         ) : (
           <DialogContent>
-            <h5 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">
-              Marks = {marks}
-            </h5>
-            <div style={{ fontSize: "15px" }}>
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col-md-8" style={{ display: "flex" }}>
+                  <h5 className="py-1 simple-header-font font-italic font-weight-bold text-left">
+                    Topics:
+                  </h5>
+                  <div style={{ margin: "0.5rem 0rem 0rem 1.5rem" }}>
+                    {topics.length === 0 ? (
+                      <span>This question does not have any topic</span>
+                    ) : (
+                      topics.map((item, i) => (
+                        <span
+                          className="pt-1 d-inline"
+                          style={{
+                            borderBottom: "1px solid rgba(0,0,0,0.3)",
+                          }}
+                        >
+                          <span> &nbsp;{item.topic},</span>
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <h5
+                    className="py-1 simple-header-font font-italic text-right"
+                    style={{
+                      textDecoration: "underline",
+                      textUnderlinePosition: "under",
+                    }}
+                  >
+                    Marks: {marks}
+                  </h5>
+                </div>
+              </div>
+            </div>
+            <div style={{ fontSize: "15px", marginTop: "1.5rem" }}>
               <MathpixLoader>
                 <MathpixMarkdown text={question} />
               </MathpixLoader>
@@ -110,7 +143,7 @@ export default function SeeQuestion(props) {
             <hr />
             <div className="container-fluid">
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-12">
                   <h5 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">
                     Options
                   </h5>
@@ -130,7 +163,7 @@ export default function SeeQuestion(props) {
                     ))}
                   </div>
                 </div>
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                   <h5 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">
                     Topics
                   </h5>
@@ -150,7 +183,7 @@ export default function SeeQuestion(props) {
                       ))
                     )}
                   </div>
-                </div>
+                </div> */}
               </div>
               <br />
               <div className="row">
