@@ -195,6 +195,7 @@ function EditQuestion(props) {
             }
           })
           .catch((err) => {
+            RefreshData();
             console.log(err);
           });
       }
@@ -232,7 +233,10 @@ function EditQuestion(props) {
             }
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          RefreshData();
+          console.log(err);
+        });
     }
   }, [window.EditQuestionId, getData]);
   // on option created
