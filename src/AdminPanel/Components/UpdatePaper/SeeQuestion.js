@@ -116,7 +116,13 @@ export default function SeeQuestion(props) {
                             borderBottom: "1px solid rgba(0,0,0,0.3)",
                           }}
                         >
-                          <span> &nbsp;{item.topic},</span>
+                          <span>
+                            {" "}
+                            &nbsp;{item.topic}
+                            {topics.length > 1 && i !== topics.length - 1
+                              ? ","
+                              : ""}
+                          </span>
                         </span>
                       ))
                     )}
@@ -163,27 +169,6 @@ export default function SeeQuestion(props) {
                     ))}
                   </div>
                 </div>
-                {/* <div className="col-md-6">
-                  <h5 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">
-                    Topics
-                  </h5>
-                  <div>
-                    {topics.length === 0 ? (
-                      <h5 className="text-center">
-                        This question does not have any topic
-                      </h5>
-                    ) : (
-                      topics.map((item, i) => (
-                        <div
-                          className="pt-3 d-flex"
-                          style={{ borderBottom: "1px solid rgba(0,0,0,0.3)" }}
-                        >
-                          <p> &nbsp;{item.topic}</p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div> */}
               </div>
               <br />
               <div className="row">
@@ -220,7 +205,7 @@ export default function SeeQuestion(props) {
                   })
                 )}
                 {/* Images View Carousel Dialog */}
-                {images.lenght === 0 ? (
+                {images.length === 0 ? (
                   <div></div>
                 ) : (
                   <ImagesCarouselModal
