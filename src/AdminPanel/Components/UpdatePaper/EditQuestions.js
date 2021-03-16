@@ -161,6 +161,45 @@ function EditQuestion(props) {
   // Get Mcqs From API
   React.useEffect(() => {
     if (window.EditQuestionId !== undefined) {
+      if (
+        !config.bucketName ||
+        !config.dirName ||
+        !config.accessKeyId ||
+        !config.secretAccessKey ||
+        config === null
+      ) {
+        // GET S3 CREDANTIONS
+        fetch("/dashboard/de/question/s3credentials", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${loginReducer}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (!res.message) {
+              if (!metadata.subject) {
+                onClose(false);
+                props.getAllQuestions();
+              } else {
+                setConfig({
+                  bucketName: "exam105",
+                  region: res.region,
+                  dirName: metadata.subject,
+                  accessKeyId: res.accesskey,
+                  secretAccessKey: res.secretkey,
+                });
+                console.log(config);
+              }
+            }
+          })
+          .catch((err) => {
+            RefreshData();
+            console.log(err);
+          });
+      }
+
       setProgressBarStatus(true);
       fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
         method: "GET",
@@ -194,7 +233,10 @@ function EditQuestion(props) {
             }
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          RefreshData();
+          console.log(err);
+        });
     }
   }, [window.EditQuestionId, getData]);
   // on option created
@@ -333,6 +375,7 @@ function EditQuestion(props) {
         if (status === 1) {
           setProgressBarStatus(true);
           const ReactS3Client = new S3(config);
+          console.log(config);
           for (var i = 0; i < deleteImagesNames.length; i++) {
             ReactS3Client.deleteFile(deleteImagesNames[i]);
           }
@@ -355,14 +398,17 @@ function EditQuestion(props) {
                     }
                   })
                   .catch((err) => {
+                    setDialogDesc(
+                      `This "${image.name}" is not uploaded. Please Try Again`
+                    );
+                    setDialogStatus(false);
+                    setProgressBarStatus(true);
                     console.log(err);
                   });
               } else {
                 imageLocations.push(image);
                 if (imageLocations.length === images.length) {
-                  setTimeout(() => {
-                    update_questions_after_image_upload(imageLocations, mark);
-                  }, 1500);
+                  update_questions_after_image_upload(imageLocations, mark);
                 }
               }
             });

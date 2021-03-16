@@ -262,7 +262,10 @@ function QuestionList(props) {
         metadata={metadata}
         open={editQuestionsStatus}
         getAllQuestions={getAllQuestions}
-        onClose={() => setEditQuestionsStatus(false)}
+        onClose={() => {
+          window.EditQuestionId = undefined;
+          setEditQuestionsStatus(false);
+        }}
       />
       {/* See Quesion Modal Dialog */}
       <SeeQuestion
