@@ -53,7 +53,7 @@ const useStyles2 = makeStyles((theme) => ({
 }));
 
 const Transition2 = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="left" ref={ref} {...props} />;
 });
 
 function EditQuestion(props) {

@@ -343,9 +343,6 @@ function DialogModalMetaData(props) {
             </form>
                     <ModelNotification DialogStatus={notificationStatus} DialogTitle="Notification" DialogDesc="Please Select Year and month." handleClose={() => setNotificationStatus(false)} DialogOk="Ok" />
                 </DialogContent>
-                <DialogActions>
-
-                </DialogActions>
             </Dialog>
         </div>
     );

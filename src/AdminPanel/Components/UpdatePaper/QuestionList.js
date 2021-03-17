@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Transition2 = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="left" ref={ref} {...props} />;
 });
 
 function QuestionList(props) {
@@ -173,6 +173,7 @@ function QuestionList(props) {
                           className="seeSomeText onHoverBoldText px-3"
                           onClick={() => {
                             window.SeeQuestionId = row.id;
+                            window.SeeQuestionIndex = index;
                             setOpenSeeDialog(true);
                           }}
                         >
@@ -200,6 +201,7 @@ function QuestionList(props) {
                             aria-label="See Question"
                             onClick={() => {
                               window.SeeQuestionId = row.id;
+                              window.SeeQuestionIndex = index;
                               setOpenSeeDialog(true);
                             }}
                           >
@@ -270,6 +272,7 @@ function QuestionList(props) {
       {/* See Quesion Modal Dialog */}
       <SeeQuestion
         open={openSeeDialog}
+        data={rows}
         handleClose={() => setOpenSeeDialog(false)}
       />
     </div>
