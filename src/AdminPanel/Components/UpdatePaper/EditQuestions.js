@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -117,27 +118,23 @@ function EditQuestion(props) {
   };
 
   React.useEffect(() => {
-    // GET S3 CREDANTIONS
-    fetch("/dashboard/de/question/s3credentials", {
+    // GET S3 CREDENTIALS
+    axios({
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${loginReducer}`,
-      },
+      url: "/dashboard/de/question/s3credentials",
     })
-      .then((res) => res.json())
       .then((res) => {
-        if (!res.message) {
+        if (!res.data.message) {
           if (!metadata.subject) {
             onClose(false);
             props.getAllQuestions();
           } else {
             setConfig({
               bucketName: "exam105",
-              region: res.region,
+              region: res.data.region,
               dirName: metadata.subject,
-              accessKeyId: res.accesskey,
-              secretAccessKey: res.secretkey,
+              accessKeyId: res.data.accesskey,
+              secretAccessKey: res.data.secretkey,
             });
             console.log(config);
           }
@@ -169,26 +166,22 @@ function EditQuestion(props) {
         config === null
       ) {
         // GET S3 CREDANTIONS
-        fetch("/dashboard/de/question/s3credentials", {
+        axios({
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${loginReducer}`,
-          },
+          url: "/dashboard/de/question/s3credentials",
         })
-          .then((res) => res.json())
           .then((res) => {
-            if (!res.message) {
+            if (!res.data.message) {
               if (!metadata.subject) {
                 onClose(false);
                 props.getAllQuestions();
               } else {
                 setConfig({
                   bucketName: "exam105",
-                  region: res.region,
+                  region: res.data.region,
                   dirName: metadata.subject,
-                  accessKeyId: res.accesskey,
-                  secretAccessKey: res.secretkey,
+                  accessKeyId: res.data.accesskey,
+                  secretAccessKey: res.data.secretkey,
                 });
                 console.log(config);
               }
@@ -201,35 +194,31 @@ function EditQuestion(props) {
       }
 
       setProgressBarStatus(true);
-      fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
+      axios({
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${loginReducer}`,
-        },
+        url: `/dashboard/de/question/${window.EditQuestionId}`,
       })
-        .then((res) => res.json())
         .then((res) => {
-          if (!res.message) {
+          if (!res.data.message) {
             if (!metadata.subject) {
               onClose(false);
               props.getAllQuestions();
             }
-            setQuestion(res.questions);
-            setOptions(res.options);
-            SelectedOptionsBackgroundChange(res.options);
+            setQuestion(res.data.questions);
+            setOptions(res.data.options);
+            SelectedOptionsBackgroundChange(res.data.options);
             setDeleteImagesNames([]);
             setProgressBarStatus(false);
-            $(".marks").val(res.marks);
-            if (res.images === undefined) {
+            $(".marks").val(res.data.marks);
+            if (res.data.images === undefined) {
               setImages([]);
             } else {
-              setImages(res.images);
+              setImages(res.data.images);
             }
             if (res.topics === undefined) {
               setTopics([]);
             } else {
-              setTopics(res.topics);
+              setTopics(res.data.topics);
             }
           }
         })
@@ -326,15 +315,11 @@ function EditQuestion(props) {
       };
 
       if (!DialogStatus) {
-        fetch(`/dashboard/de/question/${window.EditQuestionId}`, {
+        axios({
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${loginReducer}`,
-          },
+          url: `/dashboard/de/question/${window.EditQuestionId}`,
           body: JSON.stringify(data),
         })
-          .then((res) => res.json())
           .then((res) => {
             props.getAllQuestions();
             window.EditQuestionId = undefined;

@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import axios from "axios";
 // Dialog Box
 import ModelNotification from "../../../Modals/ModelNotification";
 import S3 from "react-aws-s3";
@@ -78,22 +79,18 @@ function AddQuestion(props) {
 
   // UseEffect Hook
   React.useEffect(() => {
-    // GET S3 CREDANTIONS
-    fetch("/dashboard/de/question/s3credentials", {
+    // GET S3 CREDENTIALS
+    axios({
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${loginReducer}`,
-      },
+      url: "/dashboard/de/question/s3credentials",
     })
-      .then((res) => res.json())
       .then((res) => {
-        if (!res.message) {
+        if (!res.data.message) {
           setConfig({
             bucketName: "exam105",
-            region: res.region,
-            accessKeyId: res.accesskey,
-            secretAccessKey: res.secretkey,
+            region: res.data.region,
+            accessKeyId: res.data.accesskey,
+            secretAccessKey: res.data.secretkey,
           });
         }
       })
@@ -201,15 +198,11 @@ function AddQuestion(props) {
         topics: topics,
         images: imageLocations,
       };
-      fetch(`/dashboard/de/question/meta/${props.id}`, {
+      axios({
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${loginReducer}`,
-        },
+        url: `/dashboard/de/question/meta/${props.id}`,
         body: JSON.stringify(data),
       })
-        .then((res) => res.json())
         .then((res) => {
           props.getAllQuestions();
           setTopics([]);

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import axios from "axios";
 import { NavLink } from "react-router-dom";
 import {
   FcRemoveImage,
@@ -17,25 +18,17 @@ function AdminSideBar(props) {
   const history = useHistory();
   const loginReducer = useSelector((state) => state.loginReducer);
   useEffect(() => {
-    if (loginReducer === "") {
-      history.push("/admin/panel");
-    } else {
-      fetch("/dashboard/de/metadata", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${loginReducer}`,
-        },
+    axios({
+      method: "GET",
+      url: "/dashboard/de/metadata",
+    })
+      .then((res) => {
+        if (res.data.message) {
+          props.set_logout();
+          history.push("/admin/panel/");
+        }
       })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.message) {
-            props.set_logout();
-            history.push("/admin/panel/");
-          }
-        })
-        .catch((err) => console.log(err));
-    }
+      .catch((err) => console.log(err));
   }, []);
   const sidebar_open = () => {
     $(".Admin_Sidebar").toggleClass("open_sidebar");

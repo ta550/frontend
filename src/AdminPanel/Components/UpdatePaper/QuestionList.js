@@ -6,6 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Button from "@material-ui/core/Button";
+import axios from "axios";
 // Dialog Box
 import Slide from "@material-ui/core/Slide";
 import { makeStyles } from "@material-ui/core/styles";
@@ -69,19 +70,15 @@ function QuestionList(props) {
     setRows([]);
     setProgressBarStatus("");
     if (id.length === 1) {
-      fetch(`/dashboard/de/questions/${id}`, {
+      axios({
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${loginReducer}`,
-        },
+        url: `/dashboard/de/questions/${id}`,
       })
-        .then((res) => res.json())
         .then((res) => {
           if (!metadata.subject) {
             onClose(false);
           }
-          setRows(res);
+          setRows(res.data);
           setProgressBarStatus("d-none");
         })
         .catch((err) => console.log(err));
@@ -93,14 +90,10 @@ function QuestionList(props) {
   const deleteQuestion = () => {
     if (window.DeleteQuestionsId !== "") {
       if (id.length !== 0) {
-        fetch(`/dashboard/de/question/${window.DeleteQuestionsId}/meta/${id}`, {
+        axios({
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${loginReducer}`,
-          },
+          url: `/dashboard/de/question/${window.DeleteQuestionsId}/meta/${id}`,
         })
-          .then((res) => res.json())
           .then((res) => {
             setConfirmDialogStatus(false);
             getAllQuestions();
@@ -152,7 +145,7 @@ function QuestionList(props) {
         </div>
         <TableContainer component={Paper}>
           <Table className={`${classes.table}`} aria-label="simple table">
-            {rows.map((row, index) => {
+            {rows?.map((row, index) => {
               var bg;
               if (index % 2 === 0) {
                 bg = "#F6F6F6";

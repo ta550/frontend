@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -32,7 +33,7 @@ function getComparator(order, orderBy) {
 }
 
 function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
+  const stabilizedThis = array?.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
@@ -158,21 +159,17 @@ export default function AdminPapersComponent() {
     setId([]);
     setSelected([]);
     setProgressBarStatus("");
-    fetch("/dashboard/de/metadata", {
+    axios({
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${loginReducer}`,
-      },
+      url: "/dashboard/de/metadata",
     })
-      .then((res) => res.json())
       .then((res) => {
-        if (res.message) {
+        if (res.data.message) {
           setRows([]);
           setSelected([]);
         } else {
           setProgressBarStatus("d-none");
-          setRows(res);
+          setRows(res.data);
         }
       })
       .catch((err) => console.log(err));
@@ -186,9 +183,9 @@ export default function AdminPapersComponent() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n, index) => index);
+      const newSelecteds = rows?.map((n, index) => index);
       setSelected(newSelecteds);
-      const newId = rows.map((n, index) => n.id);
+      const newId = rows?.map((n, index) => n.id);
       setId(newId);
       return;
     }
