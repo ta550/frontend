@@ -22,7 +22,6 @@ let store = createStore(
 //Request Interceptor
 axios.interceptors.request.use(
   async (config) => {
-    console.log("I checked if it is login address");
     if (config.url.includes("/superuser/login")) return config;
     if (config.url.includes("/superuser/refreshToken")) return config;
     if (config.url.includes("/superuser/operator")) {
@@ -35,26 +34,22 @@ axios.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.log("Error is:", error);
+    console.log("Request Error: ", error);
     return Promise.reject(error);
   }
 );
 // Response Interceptor
 axios.interceptors.response.use(
   (response) => {
-    console.log("I came in response section");
-    console.log("Respones is:", response);
     return response;
   },
   (error) => {
-    console.log("config is: ", error.config);
     const originalRequest = error.config;
     if (!originalRequest._retry) {
       originalRequest._retry = true;
       return axios(originalRequest);
     }
-    console.log("Error isi:", error);
-    console.log(error);
+    console.log("Response Error: ", error);
     return Promise.reject(error);
   }
 );

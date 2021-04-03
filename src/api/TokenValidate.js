@@ -24,7 +24,6 @@ const TokenValidate = async () => {
         axios
           .post("/superuser/refreshToken", { refresh_token: refresh_token })
           .then((res) => {
-            console.log("res is: ", res);
             if (!res?.data?.access_token) {
               //the execution will never reach here according to my estimation
               console.log("refresh token is gone");
@@ -33,7 +32,7 @@ const TokenValidate = async () => {
             } else {
               const { access_token } = res?.data;
               //   props.set_login(res?.data?.access_token);
-              console.log("here is access new token:", access_token);
+              console.log("refreshed the access token");
               Cookies.set("access", access_token);
               resolve(access_token);
             }
@@ -45,7 +44,6 @@ const TokenValidate = async () => {
     }
     return access_token;
   }
-  console.log("I did not go for refresh");
   return access_token;
 };
 export default TokenValidate;
