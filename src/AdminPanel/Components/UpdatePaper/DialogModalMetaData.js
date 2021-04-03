@@ -65,10 +65,11 @@ function DialogModalMetaData(props) {
 
   const submit_data = (e) => {
     e.preventDefault();
+    console.log("paper is this: ", paper);
     axios({
       method: "POST",
       url: `/dashboard/de/metadata/${props.id}`,
-      body: JSON.stringify(paper),
+      data: paper,
     })
       .then((res) => {
         props.handleClose();
@@ -193,7 +194,9 @@ function DialogModalMetaData(props) {
   const change_month_and_year = (date) => {
     setStartDate(date);
     const monthNumber = date.getMonth();
+    console.log("monthNumber is: ", monthNumber);
     const year = date.getFullYear();
+    console.log("year is: ", year);
     var month = "";
     switch (monthNumber.toString()) {
       case "0":
@@ -235,7 +238,9 @@ function DialogModalMetaData(props) {
       default:
         alert("please try again");
     }
+    console.log("year is: ", year.toString(), " and month is: ", month);
     setPaper({ ...paper, year: year.toString(), month: month });
+    console.log("paper is", paper);
   };
 
   return (

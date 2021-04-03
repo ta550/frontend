@@ -24,6 +24,7 @@ axios.interceptors.request.use(
   async (config) => {
     console.log("I checked if it is login address");
     if (config.url.includes("/superuser/login")) return config;
+    if (config.url.includes("/superuser/refreshToken")) return config;
     if (config.url.includes("/superuser/operator")) {
       config.headers["Content-Type"] = "application/json";
       return config;
@@ -46,6 +47,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log("config is: ", error.config);
     const originalRequest = error.config;
     if (!originalRequest._retry) {
       originalRequest._retry = true;

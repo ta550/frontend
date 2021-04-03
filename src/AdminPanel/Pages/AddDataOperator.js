@@ -59,7 +59,7 @@ const DataOperatorUI = () => {
     axios({
       method: "POST",
       url: "/superuser/operator",
-      body: JSON.stringify(data),
+      data: data,
     })
       .then((res) => {
         setSnackbarMessage("Operator Added Successful!");
@@ -106,7 +106,7 @@ const DataOperatorUI = () => {
       axios({
         method: "POST",
         url: `/superuser/operator/${window.updateId}`,
-        body: JSON.stringify(body),
+        data: body,
       })
         .then((res) => {
           if (res.data !== 0) {

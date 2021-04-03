@@ -410,7 +410,7 @@ function AdminAddmcqsComponent(props) {
     axios({
       method: "POST",
       url: "/dashboard/de/questions",
-      body: JSON.stringify(data),
+      data: data,
     })
       .then((res) => {
         props.resetState();

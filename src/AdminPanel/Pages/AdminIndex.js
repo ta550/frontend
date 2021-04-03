@@ -13,9 +13,6 @@ import { Button, TextField } from "@material-ui/core";
 import Slide from "@material-ui/core/Slide";
 import axios from "axios";
 import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
-import moment from "moment";
-import TokenValidate from "../../api/TokenValidate";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

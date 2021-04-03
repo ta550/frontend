@@ -11,8 +11,8 @@ const TokenValidate = async () => {
   console.log(jwt_decode(access_token));
   const accessTokenExpireTime = jwt_decode(access_token).exp;
   console.log(
-    "ExpireTime exp: ",
-    accessTokenExpireTime,
+    "AccesssExpireTime - CurrentDate: ",
+    moment.unix(accessTokenExpireTime) - moment(Date.now()),
     "  I came in hasAccess"
   );
   if (moment.unix(accessTokenExpireTime) - moment(Date.now()) < 10000) {
@@ -24,8 +24,9 @@ const TokenValidate = async () => {
         axios
           .post("/superuser/refreshToken", { refresh_token: refresh_token })
           .then((res) => {
+            console.log("res is: ", res);
             if (!res?.data?.access_token) {
-              //the execution will never reach here according to my estimate
+              //the execution will never reach here according to my estimation
               console.log("refresh token is gone");
               history.push("/admin/panel");
               resolve(false);

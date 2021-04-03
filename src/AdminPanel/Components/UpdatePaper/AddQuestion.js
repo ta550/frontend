@@ -201,7 +201,7 @@ function AddQuestion(props) {
       axios({
         method: "PUT",
         url: `/dashboard/de/question/meta/${props.id}`,
-        body: JSON.stringify(data),
+        data: data,
       })
         .then((res) => {
           props.getAllQuestions();

@@ -318,7 +318,7 @@ function EditQuestion(props) {
         axios({
           method: "POST",
           url: `/dashboard/de/question/${window.EditQuestionId}`,
-          body: JSON.stringify(data),
+          data: data,
         })
           .then((res) => {
             props.getAllQuestions();
