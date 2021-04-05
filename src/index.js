@@ -45,11 +45,11 @@ axios.interceptors.response.use(
   },
   (error) => {
     const originalRequest = error.config;
-    if (!originalRequest._retry) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       return axios(originalRequest);
     }
-    console.log("Response Error: ", error);
+    console.log("Response: ", error);
     return Promise.reject(error);
   }
 );
