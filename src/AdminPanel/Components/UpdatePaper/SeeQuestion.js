@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import Button from "@material-ui/core/Button";
 import { useSelector } from "react-redux";
 import { MathpixLoader, MathpixMarkdown } from "mathpix-markdown-it";
@@ -77,25 +78,21 @@ export default function SeeQuestion(props) {
     setTopics([]);
     setQuestion("");
     setImages([]);
-    fetch(`/dashboard/de/question/${id}`, {
+    axios({
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${loginReducer}`,
-      },
+      url: `/dashboard/de/question/${id}`,
     })
-      .then((res) => res.json())
       .then((res) => {
-        setQuestion(res.questions);
-        setOptions(res.options);
-        setMarks(res.marks);
-        if (res.images) {
-          setImages(res.images);
+        setQuestion(res.data.questions);
+        setOptions(res.data.options);
+        setMarks(res.data.marks);
+        if (res.data.images) {
+          setImages(res.data.images);
         } else {
           setImages([]);
         }
-        if (res.topics) {
-          setTopics(res.topics);
+        if (res.data.topics) {
+          setTopics(res.data.topics);
         } else {
           setTopics([]);
         }
@@ -142,8 +139,8 @@ export default function SeeQuestion(props) {
             className="d-flex align-items-center justify-content-center"
             style={{ height: "50vh" }}
           >
-            <div class="spinner-border" role="status">
-              <span class="sr-only">Loading...</span>
+            <div className="spinner-border" role="status">
+              <span className="sr-only">Loading...</span>
             </div>
           </div>
         ) : (

@@ -67,23 +67,19 @@ function AdminAddmcqsComponent(props) {
   const history = useHistory();
 
   useEffect(() => {
-    // GET S3 CREDANTIONS
-    fetch("/dashboard/de/question/s3credentials", {
+    // GET S3 CREDENTIALS
+    axios({
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${loginReducer}`,
-      },
+      url: "/dashboard/de/question/s3credentials",
     })
-      .then((res) => res.json())
       .then((res) => {
-        if (!res.message) {
+        if (!res.data.message) {
           setConfig({
             bucketName: "exam105",
             dirName: boardReducer[0].subject,
-            region: res.region,
-            accessKeyId: res.accesskey,
-            secretAccessKey: res.secretkey,
+            region: res.data.region,
+            accessKeyId: res.data.accesskey,
+            secretAccessKey: res.data.secretkey,
           });
         }
       })
@@ -411,17 +407,12 @@ function AdminAddmcqsComponent(props) {
     mcqReducer.map((item, i) => {
       data.push(item);
     });
-    fetch("/dashboard/de/questions", {
+    axios({
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${loginReducer}`,
-      },
-      body: JSON.stringify(data),
+      url: "/dashboard/de/questions",
+      data: data,
     })
-      .then((res) => res.json())
       .then((res) => {
-        console.log(data);
         props.resetState();
         props.resetBoard();
         setProgressBarStatus(false);
@@ -430,7 +421,7 @@ function AdminAddmcqsComponent(props) {
       .catch((err) => {
         console.log(err);
         setProgressBarStatus(false);
-        setDialogDesc("Some went wrong. please try Again..");
+        setDialogDesc("Something went wrong. please try Again..");
         setDialogStatus(true);
       });
   };
