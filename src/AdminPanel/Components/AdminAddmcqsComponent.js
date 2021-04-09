@@ -45,7 +45,7 @@ function AdminAddmcqsComponent(props) {
   const [topics, setTopics] = useState([]);
   const [openAlertDelete, setOpenAlertDelete] = React.useState(false);
   const [openAlertUpdate, setOpenAlertUpdate] = React.useState(false);
-  const [ConfirmDialogStatus, setConfirmDialog] = React.useState(false);
+  const [ConfirmDialogStatus, setConfirmDialogStatus] = React.useState(false);
   const [ConfirmFinishPaper, setConfirmFinishPaper] = React.useState(false);
   const [markdownFontSize, setMarkdownFontSize] = React.useState("14px");
   const [deleteImagesNames, setDeleteImagesNames] = React.useState([]);
@@ -292,9 +292,9 @@ function AdminAddmcqsComponent(props) {
     const mark = $(".marks").val();
     if (question === "" || mark === "" || options.length === 0) {
       if (question === "") {
-        setDialogDesc("Question Field Are Required!");
+        setDialogDesc("Question field is required!");
       } else if (mark === "") {
-        setDialogDesc("Marks Field Are Required!");
+        setDialogDesc("Marks field is required!");
       } else {
         setDialogDesc("Options are Missing!");
       }
@@ -358,7 +358,7 @@ function AdminAddmcqsComponent(props) {
   const delete_mcq_by_id = () => {
     if (window.value != null) {
       const index = window.value;
-      setConfirmDialog(false);
+      setConfirmDialogStatus(false);
       props.deleteState(index);
       setQuestion("");
       setOptions([]);
@@ -370,7 +370,7 @@ function AdminAddmcqsComponent(props) {
       $(".update_mcq_button").css("display", "none");
       $(".delete_mcq_button").css("display", "none");
     } else {
-      setDialogDesc("Please Select MCQ for Delete");
+      setDialogDesc("Please select MCQ that you want to delete.");
       setDialogStatus(true);
     }
   };
@@ -385,7 +385,7 @@ function AdminAddmcqsComponent(props) {
     const deleteTopic = topics.filter((item, index) => e !== index);
     setTopics(deleteTopic);
   };
-  // Questinon Output Toggle
+  // Question Output Toggle
   const question_output_hide_show = () => {
     $(".question_output").slideToggle();
   };
@@ -397,7 +397,7 @@ function AdminAddmcqsComponent(props) {
     setOpenAlertDelete(false);
     setOpenAlertUpdate(false);
     setDialogStatus(false);
-    setConfirmDialog(false);
+    setConfirmDialogStatus(false);
   };
   // Finish Exam
   const finish_paper = () => {
@@ -661,7 +661,7 @@ function AdminAddmcqsComponent(props) {
                       <button
                         type="button"
                         style={{ display: "none" }}
-                        onClick={() => setConfirmDialog(true)}
+                        onClick={() => setConfirmDialogStatus(true)}
                         className="border mx-2 mt-2 mybutton delete_mcq_button btn btn-info"
                       >
                         delete
