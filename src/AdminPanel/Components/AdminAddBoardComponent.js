@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../css/AdminAddmcqs.css";
-import { add_board, reset_mcq } from "../../action/index";
+import { add_board, reset_mcq, reset_theory } from "../../action/index";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import DatePicker from "react-datepicker";
@@ -71,6 +71,7 @@ function AdminAddBoardComponent(props) {
     } else {
       props.add_board(paper);
       props.reset_mcq();
+      props.reset_theory();
       history.push("/admin/panel/add/");
     }
   };
@@ -304,6 +305,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     reset_mcq: () => {
       dispatch(reset_mcq());
+    },
+    reset_theory: () => {
+      dispatch(reset_theory());
     },
   };
 };

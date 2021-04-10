@@ -402,28 +402,33 @@ function AdminAddmcqsComponent(props) {
   // Finish Exam
   const finish_paper = () => {
     setConfirmFinishPaper(false);
-    setProgressBarStatus(true);
     const data = new Array(boardReducer[0]);
     mcqReducer.map((item, i) => {
       data.push(item);
     });
-    axios({
-      method: "POST",
-      url: "/dashboard/de/questions",
-      data: data,
-    })
-      .then((res) => {
-        props.resetState();
-        props.resetBoard();
-        setProgressBarStatus(false);
-        history.push("/admin/panel/papers");
+    if (data[1]) {
+      setProgressBarStatus(true);
+      axios({
+        method: "POST",
+        url: "/dashboard/de/questions",
+        data: data,
       })
-      .catch((err) => {
-        console.log(err);
-        setProgressBarStatus(false);
-        setDialogDesc("Something went wrong. please try Again..");
-        setDialogStatus(true);
-      });
+        .then((res) => {
+          props.resetState();
+          props.resetBoard();
+          setProgressBarStatus(false);
+          history.push("/admin/panel/papers");
+        })
+        .catch((err) => {
+          console.log(err);
+          setProgressBarStatus(false);
+          setDialogDesc("Something went wrong. please try Again..");
+          setDialogStatus(true);
+        });
+    } else {
+      setDialogDesc("Please add at lease one question to save this paper.");
+      setDialogStatus(true);
+    }
   };
 
   // On custom add images

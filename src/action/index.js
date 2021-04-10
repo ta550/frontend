@@ -1,4 +1,4 @@
-export const add_board = (data) => {
+export const add_board = (data, theory) => {
   return {
     type: "add_board",
     subject: data.subject,
@@ -8,6 +8,7 @@ export const add_board = (data) => {
     paper: data.paper,
     year: data.year,
     month: data.month,
+    isTheory: theory ? true : false,
   };
 };
 

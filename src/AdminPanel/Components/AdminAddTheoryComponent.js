@@ -9,6 +9,7 @@ import {
   reset_board,
   reset_theory,
   update_theory,
+  add_board,
 } from "../../action/index";
 import { connect, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -323,16 +324,6 @@ function AdminAddTheoryComponent(props) {
   const answer_output_hide_show = () => {
     $(".answer_output").slideToggle();
   };
-  // // Create JSON
-  // const send_json = () => {
-  //     const array = new Array(boardReducer[0]);
-  //     mcqReducer.map((item, i) => {
-  //         array.push(item)
-  //     })
-  //     const jsonData = JSON.stringify(array);
-  //     document.write(jsonData)
-  // }
-  // // Close Alert
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -344,29 +335,44 @@ function AdminAddTheoryComponent(props) {
   // Finish Exam
   const finish_paper = () => {
     setConfirmFinishPaper(false);
-    setProgressBarStatus(true);
+    const data1 = new Array(boardReducer[0]);
+    const theory = {
+      isTheory: true,
+    };
+    data1.map((item, i) => {
+      if (item.isTheory === false) {
+        item.isTheory = true;
+      }
+    });
+    props.add_board(data1, theory);
     const data = new Array(boardReducer[0]);
     theoryReducer.map((item, i) => {
       data.push(item);
-      data.push({ is_theory: true });
     });
-    axios({
-      method: "POST",
-      url: "/dashboard/de/questions/theory",
-      data: data,
-    })
-      .then((res) => {
-        props.resetState();
-        props.resetBoard();
-        setProgressBarStatus(false);
-        history.push("/admin/panel/papers");
+    if (data[1]) {
+      setProgressBarStatus(true);
+      axios({
+        method: "POST",
+        url: "/dashboard/de/questions/theory",
+        data: data,
       })
-      .catch((err) => {
-        console.log(err);
-        setProgressBarStatus(false);
-        setDialogDesc("Something went wrong. Please try Again.");
-        setDialogStatus(true);
-      });
+        .then((res) => {
+          props.resetState();
+          props.resetBoard();
+          console.log("add thoery component got fired.");
+          setProgressBarStatus(false);
+          history.push("/admin/panel/papers");
+        })
+        .catch((err) => {
+          console.log(err);
+          setProgressBarStatus(false);
+          setDialogDesc("Something went wrong. Please try Again.");
+          setDialogStatus(true);
+        });
+    } else {
+      setDialogDesc("Please add at lease one question to save this paper.");
+      setDialogStatus(true);
+    }
   };
   // On custom add images
   const handleAddImage = (e) => {
@@ -767,6 +773,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     resetBoard: () => {
       dispatch(reset_board());
+    },
+    add_board: (data1, theory) => {
+      dispatch(add_board(data1, theory));
     },
   };
 };
