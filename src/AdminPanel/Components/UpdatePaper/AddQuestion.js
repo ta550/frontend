@@ -210,6 +210,7 @@ function AddQuestion(props) {
         topics: topics,
         images: imageLocations,
       };
+      console.log("sentData: ", is_theory ? theoryData : mcqData);
       axios({
         method: "PUT",
         url: is_theory
@@ -538,15 +539,13 @@ function AddQuestion(props) {
                     <div className="row">
                       <div className="col-12 mx-auto mt-4">
                         <div className="all_mcq_operations_button d-flex mx-auto justify-content-center w-100 ">
-                          <div onClick={add_mcq}>
+                          <div>
                             <button
                               type="button"
                               onClick={add_mcq}
                               className="bg-success mx-2 mt-2 btn mybutton"
                             >
-                              <p className="m-0" onClick={add_mcq}>
-                                add
-                              </p>
+                              <p className="m-0">add</p>
                             </button>
                           </div>
                         </div>

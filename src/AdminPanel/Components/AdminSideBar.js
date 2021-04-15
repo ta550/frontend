@@ -13,6 +13,7 @@ import $ from "jquery";
 import { useHistory } from "react-router-dom";
 import { connect, useSelector } from "react-redux";
 import { reset_board, reset_theory, reset_mcq } from "../../action/index";
+import Cookies from "js-cookie";
 
 function AdminSideBar(props) {
   const history = useHistory();
@@ -37,6 +38,8 @@ function AdminSideBar(props) {
     });
   };
   const logout = () => {
+    Cookies.remove("access");
+    localStorage.removeItem("refresh_token");
     props.set_logout();
     history.push("/admin/panel/");
   };
