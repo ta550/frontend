@@ -38,9 +38,10 @@ const useToolbarStyles = makeStyles((theme) => ({
 }));
 
 const EnhancedTableToolbar = (props) => {
+  console.log("These are props: ", props);
   const classes = useToolbarStyles();
   const [editQuestion, setEditQuestion] = useState(false);
-  const { selected, id, data } = props;
+  const { selected, id, data, is_theory } = props;
   const [dialogMetaData, setDialogMetaData] = useState(false);
   const numSelected = selected.length;
   const history = useHistory();
@@ -101,6 +102,7 @@ const EnhancedTableToolbar = (props) => {
         open={editQuestion}
         metadata={singleIdMetaData}
         id={id}
+        is_theory={is_theory}
         onClose={onHideQuestionList}
       />
 

@@ -337,11 +337,11 @@ function AdminAddTheoryComponent(props) {
     setConfirmFinishPaper(false);
     const data1 = new Array(boardReducer[0]);
     const theory = {
-      isTheory: true,
+      is_theory: true,
     };
     data1.map((item, i) => {
-      if (item.isTheory === false) {
-        item.isTheory = true;
+      if (item.is_theory === false) {
+        item.is_theory = true;
       }
     });
     props.add_board(data1, theory);

@@ -38,10 +38,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SeeQuestion(props) {
   const classes = useStyles();
-  const { handleClose, open } = props;
+  const { handleClose, open, is_theory } = props;
   const [data, setData] = React.useState([]);
   const loginReducer = useSelector((state) => state.loginReducer);
   const [question, setQuestion] = React.useState("");
+  const [answer, setAnswer] = React.useState("");
   const [options, setOptions] = React.useState([]);
   const [topics, setTopics] = React.useState([]);
   const [images, setImages] = React.useState([]);
@@ -77,21 +78,28 @@ export default function SeeQuestion(props) {
     setOptions([]);
     setTopics([]);
     setQuestion("");
+    setAnswer("");
     setImages([]);
     axios({
       method: "GET",
-      url: `/dashboard/de/question/${id}`,
+      url: is_theory
+        ? `/dashboard/de/question/theory/${id}`
+        : `/dashboard/de/question/${id}`,
     })
       .then((res) => {
-        setQuestion(res.data.questions);
-        setOptions(res.data.options);
-        setMarks(res.data.marks);
-        if (res.data.images) {
+        setQuestion(res?.data.question);
+        if (is_theory) {
+          setAnswer(res?.data.answer);
+        } else {
+          setOptions(res?.data.options);
+        }
+        setMarks(res?.data.marks);
+        if (res?.data.images) {
           setImages(res.data.images);
         } else {
           setImages([]);
         }
-        if (res.data.topics) {
+        if (res?.data.topics) {
           setTopics(res.data.topics);
         } else {
           setTopics([]);
@@ -208,34 +216,57 @@ export default function SeeQuestion(props) {
                 </div>
               </div>
               <div style={{ fontSize: "15px", marginTop: "1.5rem" }}>
+                <h5 className="py-1 simple-header-font font-italic font-weight-bold text-left">
+                  Question:
+                </h5>
                 <MathpixLoader>
                   <MathpixMarkdown text={question} />
                 </MathpixLoader>
               </div>
               <hr />
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-md-12">
-                    <h5 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">
-                      Options
+              {is_theory && (
+                <div>
+                  <div style={{ fontSize: "15px", marginTop: "1.5rem" }}>
+                    <h5 className="py-1 simple-header-font font-italic font-weight-bold text-left">
+                      Answer:
                     </h5>
-                    <div>
-                      {options.map((item, i) => (
-                        <div
-                          className="pt-3 d-flex"
-                          style={{ borderBottom: "1px solid rgba(0,0,0,0.3)" }}
-                        >
-                          {item.correct === true ? (
-                            <CheckCircleIcon className="text-success" />
-                          ) : (
-                            <CancelIcon className="text-danger" />
-                          )}
-                          <p> &nbsp;{item.option}</p>
-                        </div>
-                      ))}
-                    </div>
+                    <MathpixLoader>
+                      <MathpixMarkdown text={answer} />
+                    </MathpixLoader>
                   </div>
+                  <hr />
                 </div>
+              )}
+
+              <div className="container-fluid">
+                {!is_theory && (
+                  <>
+                    <div className="row">
+                      <div className="col-md-12">
+                        <h5 className="py-3 simple-header-font font-italic font-weight-bold shadow text-center">
+                          Options
+                        </h5>
+                        <div>
+                          {options?.map((item, i) => (
+                            <div
+                              className="pt-3 d-flex"
+                              style={{
+                                borderBottom: "1px solid rgba(0,0,0,0.3)",
+                              }}
+                            >
+                              {item.correct === true ? (
+                                <CheckCircleIcon className="text-success" />
+                              ) : (
+                                <CancelIcon className="text-danger" />
+                              )}
+                              <p> &nbsp;{item.option}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 <br />
                 <div className="row">
                   <h5 className="col-12 simple-header-font font-italic font-weight-bold shadow text-center py-3">

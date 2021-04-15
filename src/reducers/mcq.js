@@ -4,7 +4,7 @@ const mcq = (state = [], action) => {
       return [
         ...state,
         {
-          questions: action.question,
+          question: action.question,
           marks: action.marks,
           options: action.options,
           topics: action.topics,
@@ -16,7 +16,7 @@ const mcq = (state = [], action) => {
     case "update_mcq":
       let items = [...state];
       let item = { ...items[action.index] };
-      item.questions = action.question;
+      item.question = action.question;
       item.marks = action.marks;
       item.options = action.options;
       item.topics = action.topics;

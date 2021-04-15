@@ -8,7 +8,7 @@ export const add_board = (data, theory) => {
     paper: data.paper,
     year: data.year,
     month: data.month,
-    isTheory: theory ? true : false,
+    is_theory: theory ? true : false,
   };
 };
 

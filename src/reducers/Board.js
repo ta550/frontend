@@ -11,7 +11,7 @@ const board = (state = [], action) => {
           paper: action.paper,
           year: action.year,
           month: action.month,
-          isTheory: action.isTheory,
+          is_theory: action.is_theory,
         },
       ];
     case "remove_board":

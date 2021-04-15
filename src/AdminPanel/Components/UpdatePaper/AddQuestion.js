@@ -55,11 +55,12 @@ function Alert(props) {
 
 function AddQuestion(props) {
   const classes2 = useStyles2();
-  const { open } = props;
+  const { is_theory, open } = props;
 
   //   Add Question
   // React State hooks
   const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
   const [topic, setTopic] = useState("");
   const [options, setOptions] = useState([]);
   const [topics, setTopics] = useState([]);
@@ -180,6 +181,10 @@ function AddQuestion(props) {
   const question_output_hide_show = () => {
     $(".question_output").slideToggle();
   };
+  // Answer Output Toggle
+  const answer_output_hide_show = () => {
+    $(".answer_output").slideToggle();
+  };
   // Close Alert
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -191,17 +196,26 @@ function AddQuestion(props) {
   // on mcq added
   const add_questions_after_image_upload = (imageLocations, mark) => {
     if (props.id.length === 1) {
-      const data = {
-        questions: question,
+      const mcqData = {
+        question: question,
         marks: mark,
         options: options,
         topics: topics,
         images: imageLocations,
       };
+      const theoryData = {
+        question: question,
+        answer: answer,
+        marks: mark,
+        topics: topics,
+        images: imageLocations,
+      };
       axios({
         method: "PUT",
-        url: `/dashboard/de/question/meta/${props.id}`,
-        data: data,
+        url: is_theory
+          ? `/dashboard/de/question/theory/meta/${props.id}`
+          : `/dashboard/de/question/meta/${props.id}`,
+        data: is_theory ? theoryData : mcqData,
       })
         .then((res) => {
           props.getAllQuestions();
@@ -209,6 +223,7 @@ function AddQuestion(props) {
           setProgressBarStatus(false);
           setOptions([]);
           setQuestion("");
+          setAnswer("");
           setImages([]);
           props.handleClose();
           $(".marks").val("");
@@ -221,31 +236,22 @@ function AddQuestion(props) {
 
   const add_mcq = async () => {
     if (props.id.length === 1) {
-      // Validation
-      const mark = $(".marks").val();
-      if (question === "" || mark === "" || options.length === 0) {
-        if (question === "") {
-          setDialogDesc("Question Field Are Required!");
-        } else if (mark === "") {
-          setDialogDesc("Marks Field Are Required!");
-        } else {
-          setDialogDesc("Options are Missing!");
-        }
-
-        setDialogStatus(true);
-      } else {
-        const items = [...options];
-        let status = 0;
-        for (var i = 0; i < items.length; i++) {
-          if (items[i].correct === true) {
-            status = 1;
+      if (is_theory) {
+        // Validation
+        const mark = $(".marks").val();
+        if (question === "" || mark === "" || answer === "") {
+          if (question === "") {
+            setDialogDesc("Question field is required!");
+          } else if (mark === "") {
+            setDialogDesc("Marks field is required!");
+          } else {
+            setDialogDesc("Answer field is required!");
           }
-        }
-        if (status === 1) {
+          setDialogStatus(true);
+        } else {
           setProgressBarStatus(true);
           const ReactS3Client = new S3(config);
-
-          var imageLocations = [];
+          let imageLocations = [];
           if (images.length !== 0) {
             images.map((image, i) => {
               ReactS3Client.uploadFile(image, image.name)
@@ -263,9 +269,53 @@ function AddQuestion(props) {
           } else {
             add_questions_after_image_upload(imageLocations, mark);
           }
-        } else {
-          setDialogDesc("Chose The correct Option");
+        }
+      } else {
+        // Validation
+        const mark = $(".marks").val();
+        if (question === "" || mark === "" || options.length === 0) {
+          if (question === "") {
+            setDialogDesc("Question Field Are Required!");
+          } else if (mark === "") {
+            setDialogDesc("Marks Field Are Required!");
+          } else {
+            setDialogDesc("Options are Missing!");
+          }
+
           setDialogStatus(true);
+        } else {
+          const items = [...options];
+          let status = 0;
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].correct === true) {
+              status = 1;
+            }
+          }
+          if (status === 1) {
+            setProgressBarStatus(true);
+            const ReactS3Client = new S3(config);
+            var imageLocations = [];
+            if (images.length !== 0) {
+              images.map((image, i) => {
+                ReactS3Client.uploadFile(image, image.name)
+                  .then((res) => {
+                    const imageURL = { imageurl: res.location };
+                    imageLocations.push(imageURL);
+                    if (imageLocations.length === images.length) {
+                      add_questions_after_image_upload(imageLocations, mark);
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              });
+            } else {
+              add_questions_after_image_upload(imageLocations, mark);
+            }
+          } else {
+            setDialogDesc("Chose The correct Option");
+            setDialogStatus(true);
+          }
         }
       }
     } else {
@@ -374,66 +424,115 @@ function AddQuestion(props) {
                         <MathpixMarkdown text={question} />
                       </MathpixLoader>
                     </div>
-                    <div className="form-group m-0">
-                      <input
-                        type="text"
-                        name="option_input"
-                        placeholder="Enter Option"
-                        style={{ width: "90%" }}
-                        className="d-inline static_option form-control"
-                        required
-                      />{" "}
-                      <button
-                        type="submit"
-                        className="p-1 mt-1"
-                        style={{
-                          width: "5%",
-                          background: "none",
-                          border: "none",
-                          outline: "none",
-                        }}
-                      >
-                        <FcPlus className="another_option h2" />
-                      </button>
-                    </div>
-                    {options.map((item, i) => {
-                      return (
-                        <div key={i} className={`mcqDisplay mcq${i}`}>
-                          <p
-                            style={{
-                              width: "80%",
-                              fontSize: "15px",
-                              wordWrap: "break-word",
-                            }}
-                            className="option_text py-auto mb-2"
-                          >
-                            {item.option}
-                          </p>
-                          <div className="mcqDisplay__button">
-                            <svg
-                              onClick={() => onselect(i)}
-                              className="MuiSvgIcon-root mcqDisplay__correct"
-                              style={{ cursor: "pointer" }}
-                              focusable="false"
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                            >
-                              <path d="M16.59 7.58L10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
-                            </svg>
-                            <svg
-                              onClick={() => deleteOption(i)}
-                              style={{ cursor: "pointer" }}
-                              className="MuiSvgIcon-root mcqDisplay__delete"
-                              focusable="false"
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                            >
-                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
-                            </svg>
-                          </div>
+                    {is_theory && (
+                      <>
+                        <div className="form-group">
+                          <textarea
+                            className="form-control"
+                            placeholder="Enter Answer"
+                            rows="5"
+                            value={answer}
+                            onChange={(e) => setAnswer(e.target.value)}
+                            required
+                          ></textarea>
                         </div>
-                      );
-                    })}
+                        <div className="row">
+                          <select
+                            value={markdownFontSize}
+                            onChange={(e) =>
+                              setMarkdownFontSize(e.target.value)
+                            }
+                            className="small ml-3"
+                            style={{ height: "25px" }}
+                          >
+                            <option value="12px">12px</option>
+                            <option value="13px">13px</option>
+                            <option value="14px">14px</option>
+                            <option value="15px">15px</option>
+                            <option value="16px">16px</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={answer_output_hide_show}
+                            className="btn mr-3 btn-sm btn-info mybutton mb-2 d-flex ml-auto"
+                          >
+                            Hide / Show
+                          </button>
+                        </div>
+                        <div
+                          className="p-2 form-group answer_output col-12"
+                          style={{ fontSize: markdownFontSize }}
+                        >
+                          <MathpixLoader>
+                            <MathpixMarkdown text={answer} />
+                          </MathpixLoader>
+                        </div>
+                      </>
+                    )}
+                    {!is_theory && (
+                      <>
+                        <div className="form-group m-0">
+                          <input
+                            type="text"
+                            name="option_input"
+                            placeholder="Enter Option"
+                            style={{ width: "90%" }}
+                            className="d-inline static_option form-control"
+                            required
+                          />{" "}
+                          <button
+                            type="submit"
+                            className="p-1 mt-1"
+                            style={{
+                              width: "5%",
+                              background: "none",
+                              border: "none",
+                              outline: "none",
+                            }}
+                          >
+                            <FcPlus className="another_option h2" />
+                          </button>
+                        </div>
+                        {options.map((item, i) => {
+                          return (
+                            <div key={i} className={`mcqDisplay mcq${i}`}>
+                              <p
+                                style={{
+                                  width: "80%",
+                                  fontSize: "15px",
+                                  wordWrap: "break-word",
+                                }}
+                                className="option_text py-auto mb-2"
+                              >
+                                {item.option}
+                              </p>
+                              <div className="mcqDisplay__button">
+                                <svg
+                                  onClick={() => onselect(i)}
+                                  className="MuiSvgIcon-root mcqDisplay__correct"
+                                  style={{ cursor: "pointer" }}
+                                  focusable="false"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                >
+                                  <path d="M16.59 7.58L10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
+                                </svg>
+                                <svg
+                                  onClick={() => deleteOption(i)}
+                                  style={{ cursor: "pointer" }}
+                                  className="MuiSvgIcon-root mcqDisplay__delete"
+                                  focusable="false"
+                                  viewBox="0 0 24 24"
+                                  aria-hidden="true"
+                                >
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+                                </svg>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </>
+                    )}
                   </form>
                   <div className="container-fluid">
                     <div className="row">

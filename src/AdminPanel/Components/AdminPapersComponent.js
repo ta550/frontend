@@ -151,6 +151,7 @@ export default function AdminPapersComponent() {
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [id, setId] = React.useState([]);
+  const [isTheory, setIsTheory] = React.useState(false);
   const loginReducer = useSelector((state) => state.loginReducer);
   const [getData, setGetData] = React.useState("");
   const [progressBarStatus, setProgressBarStatus] = React.useState("");
@@ -168,6 +169,7 @@ export default function AdminPapersComponent() {
           setRows([]);
           setSelected([]);
         } else {
+          console.log("This is resData: ", res.data);
           setProgressBarStatus("d-none");
           setRows(res.data);
         }
@@ -198,7 +200,18 @@ export default function AdminPapersComponent() {
     const selectedId = id.indexOf(id2);
     let newSelected = [];
     let newId = [];
-
+    const newTheory = rows?.map((n, i) => {
+      if (i === index) {
+        return n.is_theory ? n.is_theory : false;
+      }
+    });
+    let theory;
+    newTheory.map((n, i) => {
+      if (n !== undefined) {
+        theory = n;
+      }
+    });
+    setIsTheory(theory);
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, index);
       newId = newId.concat(id, id2);
@@ -253,6 +266,7 @@ export default function AdminPapersComponent() {
           data={rows}
           progressBarStatus={progressBarStatus}
           id={id}
+          is_theory={isTheory}
           selected={selected}
           callUseEffect={callUseEffect}
         />

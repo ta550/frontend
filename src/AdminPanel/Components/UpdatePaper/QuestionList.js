@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
+import Tooltip from "@material-ui/core/Tooltip";
 // Dialog Box
 import Slide from "@material-ui/core/Slide";
 import { makeStyles } from "@material-ui/core/styles";
@@ -44,7 +45,7 @@ const Transition2 = React.forwardRef(function Transition(props, ref) {
 
 function QuestionList(props) {
   const classes = useStyles();
-  const { open, metadata, onClose, id } = props;
+  const { open, metadata, onClose, id, is_theory } = props;
   const [rows, setRows] = React.useState([]);
   const loginReducer = useSelector((state) => state.loginReducer);
   const [openSeeDialog, setOpenSeeDialog] = React.useState(false);
@@ -72,7 +73,9 @@ function QuestionList(props) {
     if (id.length === 1) {
       axios({
         method: "GET",
-        url: `/dashboard/de/questions/${id}`,
+        url: is_theory
+          ? `/dashboard/de/questions/theory/${id}`
+          : `/dashboard/de/questions/${id}`,
       })
         .then((res) => {
           if (!metadata.subject) {
@@ -92,7 +95,9 @@ function QuestionList(props) {
       if (id.length !== 0) {
         axios({
           method: "DELETE",
-          url: `/dashboard/de/question/${window.DeleteQuestionsId}/meta/${id}`,
+          url: is_theory
+            ? `/dashboard/de/question/theory/${window.DeleteQuestionsId}/meta/${id}`
+            : `/dashboard/de/question/${window.DeleteQuestionsId}/meta/${id}`,
         })
           .then((res) => {
             setConfirmDialogStatus(false);
@@ -102,7 +107,7 @@ function QuestionList(props) {
           .catch((err) => console.log(err));
       }
     } else {
-      alert("Some Went Wrong. Please Try Again...");
+      alert("Something went wrong. Please Try Again...");
       setConfirmDialogStatus(false);
     }
   };
@@ -170,36 +175,42 @@ function QuestionList(props) {
                             setOpenSeeDialog(true);
                           }}
                         >
-                          {row.questions}
+                          {row.question}
                         </p>
                       </div>
                       <div className="col-2">
                         <div className="d-flex">
-                          <IconButton
-                            aria-label="Delete Question"
-                            onClick={() => openConfirmDialog(row.id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                          <IconButton
-                            aria-label="Edit Question"
-                            onClick={() => {
-                              window.EditQuestionId = row.id;
-                              setEditQuestionsStatus(true);
-                            }}
-                          >
-                            <MdModeEdit />
-                          </IconButton>
-                          <IconButton
-                            aria-label="See Question"
-                            onClick={() => {
-                              window.SeeQuestionId = row.id;
-                              window.SeeQuestionIndex = index;
-                              setOpenSeeDialog(true);
-                            }}
-                          >
-                            <BsFillEyeFill />
-                          </IconButton>
+                          <Tooltip title="Delete this question" arrow>
+                            <IconButton
+                              aria-label="Delete Question"
+                              onClick={() => openConfirmDialog(row.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Edit this question" arrow>
+                            <IconButton
+                              aria-label="Edit Question"
+                              onClick={() => {
+                                window.EditQuestionId = row.id;
+                                setEditQuestionsStatus(true);
+                              }}
+                            >
+                              <MdModeEdit />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Open this question" arrow>
+                            <IconButton
+                              aria-label="See Question"
+                              onClick={() => {
+                                window.SeeQuestionId = row.id;
+                                window.SeeQuestionIndex = index;
+                                setOpenSeeDialog(true);
+                              }}
+                            >
+                              <BsFillEyeFill />
+                            </IconButton>
+                          </Tooltip>
                         </div>
                       </div>
                     </div>
@@ -226,12 +237,18 @@ function QuestionList(props) {
               <AddIcon />
             </Fab>
             {/* Add Question Dialog */}
-            <AddQuestion
-              getAllQuestions={getAllQuestions}
-              id={id}
-              open={openAddQuestion}
-              handleClose={() => setOpenAddQuestion(false)}
-            />
+            <Tooltip
+              TransitionComponent={AddQuestion}
+              title="Add a new question to this paper"
+            >
+              <AddQuestion
+                getAllQuestions={getAllQuestions}
+                id={id}
+                is_theory={is_theory}
+                open={openAddQuestion}
+                handleClose={() => setOpenAddQuestion(false)}
+              />
+            </Tooltip>
           </Table>
           <br />
           <br />
@@ -257,6 +274,7 @@ function QuestionList(props) {
         metadata={metadata}
         open={editQuestionsStatus}
         getAllQuestions={getAllQuestions}
+        is_theory={is_theory}
         onClose={() => {
           window.EditQuestionId = undefined;
           setEditQuestionsStatus(false);
@@ -266,6 +284,7 @@ function QuestionList(props) {
       <SeeQuestion
         open={openSeeDialog}
         data={rows}
+        is_theory={is_theory}
         handleClose={() => setOpenSeeDialog(false)}
       />
     </div>
