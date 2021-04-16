@@ -169,7 +169,6 @@ export default function AdminPapersComponent() {
           setRows([]);
           setSelected([]);
         } else {
-          console.log("This is resData: ", res.data);
           setProgressBarStatus("d-none");
           setRows(res.data);
         }

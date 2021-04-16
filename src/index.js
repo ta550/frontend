@@ -47,6 +47,9 @@ axios.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + Cookies.get("access");
+      axios.defaults.headers.common["Content-Type"] = "application/json";
       return axios(originalRequest);
     }
     console.log("Response: ", error);

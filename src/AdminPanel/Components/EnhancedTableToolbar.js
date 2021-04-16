@@ -38,7 +38,6 @@ const useToolbarStyles = makeStyles((theme) => ({
 }));
 
 const EnhancedTableToolbar = (props) => {
-  console.log("These are props: ", props);
   const classes = useToolbarStyles();
   const [editQuestion, setEditQuestion] = useState(false);
   const { selected, id, data, is_theory } = props;

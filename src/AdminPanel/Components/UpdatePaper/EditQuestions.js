@@ -219,15 +219,15 @@ function EditQuestion(props) {
             setDeleteImagesNames([]);
             setProgressBarStatus(false);
             $(".marks").val(res.data.marks);
-            if (res.data.images === undefined) {
+            if (res?.data.images === undefined) {
               setImages([]);
             } else {
-              setImages(res.data.images);
+              setImages(res?.data.images);
             }
-            if (res.topics === undefined) {
+            if (res?.data.topics === undefined) {
               setTopics([]);
             } else {
-              setTopics(res.data.topics);
+              setTopics(res?.data.topics);
             }
           }
         })
