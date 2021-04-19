@@ -76,6 +76,7 @@ export default function SeeQuestion(props) {
 
   const getQuestion = (id) => {
     setOptions([]);
+    setMarks("");
     setTopics([]);
     setQuestion("");
     setAnswer("");
@@ -132,7 +133,9 @@ export default function SeeQuestion(props) {
                 setOptions([]);
                 setTopics([]);
                 setQuestion("");
+                setAnswer("");
                 setImages([]);
+                setMarks("");
                 handleClose();
               }}
               aria-label="close"
