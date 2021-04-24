@@ -6,6 +6,7 @@ import {
   FcPlus,
   FcTodoList,
   FcDeleteDatabase,
+  FcSearch,
 } from "react-icons/fc";
 import { BsFillCaretRightFill } from "react-icons/bs";
 import "../css/AdminSideBar.css";
@@ -60,6 +61,11 @@ function AdminSideBar(props) {
         <li>
           <NavLink exact to="/admin/panel/add/papers">
             <FcPlus /> Add Paper
+          </NavLink>
+        </li>
+        <li>
+          <NavLink exact to="/admin/panel/search">
+            <FcSearch /> Search
           </NavLink>
         </li>
         <li onClick={logout}>

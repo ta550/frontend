@@ -1,0 +1,6 @@
+.datepicker_main .react-datepicker-wrapper {
+  width: 100%;
+}
+.datepicker_main .react-datepicker-wrapper input {
+  user-select: none;
+}

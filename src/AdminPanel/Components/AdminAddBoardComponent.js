@@ -7,7 +7,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ModelNotification from "../../Modals/ModelNotification";
 import ConfirmDialog from "../../Modals/ConfirmDialog";
-import { MenuItem, Select } from "@material-ui/core";
 import { useSelector } from "react-redux";
 
 function AdminAddBoardComponent(props) {
