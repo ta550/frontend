@@ -50,8 +50,10 @@ const EnhancedTableToolbar = (props) => {
   const { callUseEffect } = props;
 
   const openDialogMetaData = () => {
+    console.log("thiss data: ", data);
     data.map((item, i) => {
       if (item.id === id[0]) {
+        console.log("item is: ", item);
         setSingleIdMetaData(item);
       }
     });
@@ -79,7 +81,6 @@ const EnhancedTableToolbar = (props) => {
   };
 
   const onHideQuestionList = () => {
-    console.log(id);
     if (id.length >= 0) {
       data.map((item, i) => {
         if (item.id === id[0]) {

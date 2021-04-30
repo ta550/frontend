@@ -57,8 +57,7 @@ function DialogModalMetaData(props) {
     system: "",
     board: "",
     subject: "",
-    year: "",
-    month: "",
+    date: "",
     series: "",
     paper: "",
   });
@@ -134,108 +133,69 @@ function DialogModalMetaData(props) {
     };
     change_input(e);
     setPaper({
-      system: props.data.system,
-      board: props.data.board,
-      subject: props.data.subject,
-      year: props.data.year,
-      month: props.data.month,
-      series: props.data.series,
-      paper: props.data.paper,
+      system: props?.data?.system,
+      board: props?.data?.board,
+      subject: props?.data?.subject,
+      date: props?.data?.date,
+      series: props?.data?.series,
+      paper: props?.data?.paper,
     });
     setOpen(props.DialogStatus);
-    let year = props.data.year;
-    let month = props.data.month;
-    let monthNumber = "";
-    switch (month) {
-      case "January":
-        monthNumber = 0;
-        break;
-      case "February":
-        monthNumber = 1;
-        break;
-      case "March":
-        monthNumber = 2;
-        break;
-      case "April":
-        monthNumber = 3;
-        break;
-      case "May":
-        monthNumber = 4;
-        break;
-      case "June":
-        monthNumber = 5;
-        break;
-      case "July":
-        monthNumber = 6;
-        break;
-      case "August":
-        monthNumber = 7;
-        break;
-      case "September":
-        monthNumber = 8;
-        break;
-      case "October":
-        monthNumber = 9;
-        break;
-      case "November":
-        monthNumber = 10;
-        break;
-      case "December":
-        monthNumber = 11;
-        break;
-      default:
-        monthNumber = 1;
-        year = 2020;
+    if (props.data.date !== undefined) {
+      const newDate = new Date(props.data.date);
+      setStartDate(newDate);
     }
-    const newDate = new Date(year, monthNumber);
-    setStartDate(newDate);
   }, [props.DialogStatus]);
   const change_month_and_year = (date) => {
-    setStartDate(date);
     const monthNumber = date.getMonth();
     const year = date.getFullYear();
-    var month = "";
-    switch (monthNumber.toString()) {
-      case "0":
-        month = "January";
-        break;
-      case "1":
-        month = "February";
-        break;
-      case "2":
-        month = "March";
-        break;
-      case "3":
-        month = "April";
-        break;
-      case "4":
-        month = "May";
-        break;
-      case "5":
-        month = "June";
-        break;
-      case "6":
-        month = "July";
-        break;
-      case "7":
-        month = "August";
-        break;
-      case "8":
-        month = "September";
-        break;
-      case "9":
-        month = "October";
-        break;
-      case "10":
-        month = "November";
-        break;
-      case "11":
-        month = "December";
-        break;
-      default:
-        alert("please try again");
-    }
-    setPaper({ ...paper, year: year.toString(), month: month });
+    let newDate = new Date(year, monthNumber, "1", "00", "00", "00");
+    setStartDate(newDate);
+    // const monthNumber = date.getMonth();
+    // const year = date.getFullYear();
+    // var month = "";
+    // switch (monthNumber.toString()) {
+    //   case "0":
+    //     month = "January";
+    //     break;
+    //   case "1":
+    //     month = "February";
+    //     break;
+    //   case "2":
+    //     month = "March";
+    //     break;
+    //   case "3":
+    //     month = "April";
+    //     break;
+    //   case "4":
+    //     month = "May";
+    //     break;
+    //   case "5":
+    //     month = "June";
+    //     break;
+    //   case "6":
+    //     month = "July";
+    //     break;
+    //   case "7":
+    //     month = "August";
+    //     break;
+    //   case "8":
+    //     month = "September";
+    //     break;
+    //   case "9":
+    //     month = "October";
+    //     break;
+    //   case "10":
+    //     month = "November";
+    //     break;
+    //   case "11":
+    //     month = "December";
+    //     break;
+    //   default:
+    //     alert("please try again");
+    // }
+    setPaper({ ...paper, date: date });
+    // setPaper({ ...paper, year: year.toString(), month: month });
   };
   return (
     <div>

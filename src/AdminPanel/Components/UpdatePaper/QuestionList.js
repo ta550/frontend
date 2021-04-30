@@ -79,6 +79,7 @@ function QuestionList(props) {
           if (!metadata.subject) {
             onClose(false);
           }
+          console.log("data: ", res.data);
           setRows(res.data);
           setProgressBarStatus("d-none");
         })

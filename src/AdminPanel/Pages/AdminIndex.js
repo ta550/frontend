@@ -27,7 +27,7 @@ function AdminIndex(props) {
   });
   const [DialogStatus, setDialogStatus] = React.useState(false);
   const history = useHistory();
-  const loginReducer = useSelector((state) => state.loginReducer);
+  // const loginReducer = useSelector((state) => state.loginReducer);
   // useEffect(() => {
   //   if (loginReducer) {
   //     history.push("/admin/panel/papers");

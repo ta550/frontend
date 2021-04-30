@@ -9,8 +9,7 @@ const board = (state = [], action) => {
           board: action.board,
           series: action.series,
           paper: action.paper,
-          year: action.year,
-          month: action.month,
+          date: action.date,
           is_theory: action.is_theory,
         },
       ];

@@ -513,8 +513,14 @@ function AdminAddmcqsComponent(props) {
                       <td style={{ whiteSpace: "nowrap" }}>{item.system}</td>
                       <td style={{ whiteSpace: "nowrap" }}>{item.board}</td>
                       <td style={{ whiteSpace: "nowrap" }}>{item.subject}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{item.year}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{item.month}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        {new Date(item.date).getFullYear()}
+                      </td>
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        {new Date(item.date).toLocaleString("default", {
+                          month: "long",
+                        })}
+                      </td>
                       <td style={{ whiteSpace: "nowrap" }}>{item.series}</td>
                       <td style={{ whiteSpace: "nowrap" }}>{item.paper}</td>
                     </tr>
