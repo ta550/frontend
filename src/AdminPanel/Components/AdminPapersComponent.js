@@ -171,6 +171,7 @@ export default function AdminPapersComponent() {
         } else {
           setProgressBarStatus("d-none");
           setRows(res.data);
+          console.log("this is data: ", res.data);
         }
       })
       .catch((err) => console.log(err));

@@ -121,53 +121,17 @@ function AdminAddBoardComponent(props) {
   };
 
   const change_month_and_year = (date) => {
-    const monthNumber = date.getMonth();
+    let monthNumber = date.getMonth();
+    monthNumber = monthNumber + 1;
     const year = date.getFullYear();
-    let newDate = new Date(year, monthNumber, "1", "00", "00", "00");
+    let m;
+    if (monthNumber < 10) {
+      m = `0${monthNumber}`;
+    } else {
+      m = `${monthNumber}`;
+    }
+    let newDate = new Date(`${year}-${m}-01T00:00:00Z`);
     setStartDate(newDate);
-    // console.log(date.toJSON());
-    // var month = "";
-    // switch (monthNumber.toString()) {
-    //   case "0":
-    //     month = "January";
-    //     break;
-    //   case "1":
-    //     month = "February";
-    //     break;
-    //   case "2":
-    //     month = "March";
-    //     break;
-    //   case "3":
-    //     month = "April";
-    //     break;
-    //   case "4":
-    //     month = "May";
-    //     break;
-    //   case "5":
-    //     month = "June";
-    //     break;
-    //   case "6":
-    //     month = "July";
-    //     break;
-    //   case "7":
-    //     month = "August";
-    //     break;
-    //   case "8":
-    //     month = "September";
-    //     break;
-    //   case "9":
-    //     month = "October";
-    //     break;
-    //   case "10":
-    //     month = "November";
-    //     break;
-    //   case "11":
-    //     month = "December";
-    //     break;
-    //   default:
-    //     alert("please try again");
-    // }
-    // setPaper({ ...paper, year: year.toString(), month: month });
     setPaper({ ...paper, date: date });
   };
 

@@ -50,10 +50,8 @@ const EnhancedTableToolbar = (props) => {
   const { callUseEffect } = props;
 
   const openDialogMetaData = () => {
-    console.log("thiss data: ", data);
     data.map((item, i) => {
       if (item.id === id[0]) {
-        console.log("item is: ", item);
         setSingleIdMetaData(item);
       }
     });

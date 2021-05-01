@@ -25,6 +25,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
 import S3 from "react-aws-s3";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { CollectionsOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
