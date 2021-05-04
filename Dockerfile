@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN apk add --no-cache git
 RUN npm ci
-RUN npm install -g
+RUN npm install --no-optional && npm cache clean --force
 COPY . ./
 RUN npm run build
 
