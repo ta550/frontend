@@ -3,8 +3,8 @@ FROM node:14.15.4-alpine as build
 WORKDIR /app
 COPY package*.json ./
 RUN apk add --no-cache git
-RUN npm ci
-RUN npm install --no-optional && npm cache clean --force
+RUN npm ci && npm cache clean --force
+RUN npm install --no-optional
 COPY . ./
 RUN npm run build
 
